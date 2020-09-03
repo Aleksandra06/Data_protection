@@ -1,0 +1,88 @@
+﻿@using DataProtection.PageModels.Lab1
+
+<h5 class="pt-4">Функция быстрого возведения числа в степень по модулю.</h5>
+
+<img src="images/PowerMod.PNG" width="200px" />
+
+<EditForm Model="NumberToPower">
+    <div class="row pb-1">
+        <label for="Number" class="pr-2">a = </label>
+        <InputNumber @bind-Value="@NumberToPower.a" Class="form-control little-form" id="Number" style="width: 200px" min="0" max="999999999"></InputNumber>
+    </div>
+    <div class="row pb-1">
+        <label for="Power" class="pr-2">x = </label>
+        <InputNumber @bind-Value="@NumberToPower.x" Class="form-control little-form" id="Power" style="width: 100px" min="0" max="999999999"></InputNumber>
+    </div>
+    <div class="row pb-2">
+        <label for="Mod" class="pr-2">p = </label>
+        <InputNumber @bind-Value="@NumberToPower.p" Class="form-control little-form" id="Mod" style="width: 100px" min="1" max="999999999"></InputNumber>
+    </div>
+    <div class="row pb-1">
+        <button class="btn btn-nav" @onclick="@Calculation">Вычислить</button>
+    </div>
+    <div class="row pb-1">
+        <label for="y" class="pr-2">y = </label>
+        <div class="form-control little-form" id="y" style="width: 100px">@NumberToPower.y</div>
+    </div>
+    <div class="row pb-1">
+        <label class="pr-2">Проверка: </label>
+        <div class="form-control little-form" style="width: 100px">
+            @(NumberToPower.y.ToString() == Check ? "Успех" : "Ошибка")
+        </div>
+    </div>
+    @*<div class="form-group">
+            <label for="Result">Ответ:</label>
+            <div Class="form-control" id="Result" style="width: 200px">@NumberToPower.y</div>
+        </div>
+        <div class="form-group">
+            <label for="Result">Проверка:</label>
+            <div Class="form-control" id="Result" style="width: 200px">@Check</div>
+        </div>*@
+</EditForm>
+
+@code {
+
+    NumbersToPower NumberToPower { get; set; } = new NumbersToPower();
+    string Check { get; set; }
+
+    void Calculation()
+    {
+        if (NumberToPower.p == 0)
+        {
+            return;
+        }
+
+        Check = System.Numerics.BigInteger.ModPow(NumberToPower.a, NumberToPower.x, NumberToPower.p).ToString();
+        NumberToPower.y = Pow(NumberToPower.a, NumberToPower.x, NumberToPower.p);
+    }
+
+    long Pow(long a, int x, int p)
+    {
+        var y = new long();
+        var s = new long();
+        var bin = Convert.ToString(x, 2);
+
+        y = 1;
+        s = a % p;
+        if (bin[^1] != '0')
+        {
+            y = s;
+        }
+
+        for (var i = bin.Length - 2; i >= 0; i--)
+        {
+            s = (s * s) % p;
+
+            var t = bin[i];
+            var t1 = '0';
+            if (bin[i] == '0')
+            {
+                continue;
+            }
+
+            y *= s;
+        }
+
+        return y % p;
+    }
+}

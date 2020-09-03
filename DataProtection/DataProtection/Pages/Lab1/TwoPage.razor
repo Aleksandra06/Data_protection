@@ -1,0 +1,44 @@
+﻿@using DataProtection.PageModels.Lab1
+<h5 class="pt-4">Функция, реализующая обобщённый алгоритм Евклида. Функция должна позволять находить наибольший общий делитель и обе неизвестных из уравнения.</h5>
+
+<EditForm Model="OneEvklid">
+    <div class="row pb-1">
+        <label for="Number" class="pr-2">a = </label>
+        <InputNumber @bind-Value="@OneEvklid.a" Class="form-control little-form" id="Number" style="width: 200px" min="0" max="999999999"></InputNumber>
+    </div>
+    <div class="row pb-1">
+        <label for="Power" class="pr-2">x = </label>
+        <InputNumber @bind-Value="@OneEvklid.b" Class="form-control little-form" id="Power" style="width: 100px" min="0" max="999999999"></InputNumber>
+    </div>
+    <div class="row pb-1">
+        <button class="btn btn-nav" @onclick="@Calculation">Вычислить</button>
+    </div>
+    <div class="row pb-1">
+        <label for="y" class="pr-2">y = </label>
+        <div class="form-control little-form" id="y" style="width: 100px">@OneEvklid.r</div>
+    </div>
+    @*<div class="row pb-1">
+        <label class="pr-2">Проверка: </label>
+        <div class="form-control little-form" style="width: 100px">
+            @(OneEvklid.r.ToString() == Check ? "Успех" : "Ошибка")
+        </div>
+    </div>*@
+    @*<div class="form-group">
+            <label for="Result">Ответ:</label>
+            <div Class="form-control" id="Result" style="width: 200px">@NumberToPower.y</div>
+        </div>
+        <div class="form-group">
+            <label for="Result">Проверка:</label>
+            <div Class="form-control" id="Result" style="width: 200px">@Check</div>
+        </div>*@
+</EditForm>
+
+@code {
+    Evklid OneEvklid { get; set; }
+    string Check { get; set; }
+
+    void Calculation()
+    {
+
+    }
+}
