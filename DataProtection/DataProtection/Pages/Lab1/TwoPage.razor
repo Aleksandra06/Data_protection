@@ -1,44 +1,115 @@
 ﻿@using DataProtection.PageModels.Lab1
 <h5 class="pt-4">Функция, реализующая обобщённый алгоритм Евклида. Функция должна позволять находить наибольший общий делитель и обе неизвестных из уравнения.</h5>
 
-<EditForm Model="OneEvklid">
+<h7>ax + by = gcd(a, b)</h7>
+<EditForm Model="EvklidNumbers">
     <div class="row pb-1">
-        <label for="Number" class="pr-2">a = </label>
-        <InputNumber @bind-Value="@OneEvklid.a" Class="form-control little-form" id="Number" style="width: 200px" min="0" max="999999999"></InputNumber>
+        <label class="pr-2">a = </label>
+        <InputNumber @bind-Value="@EvklidNumbers.A" Class="form-control little-form" id="a" style="width: 200px" min="0" max="999999999"></InputNumber>
     </div>
     <div class="row pb-1">
-        <label for="Power" class="pr-2">x = </label>
-        <InputNumber @bind-Value="@OneEvklid.b" Class="form-control little-form" id="Power" style="width: 100px" min="0" max="999999999"></InputNumber>
+        <label class="pr-2">b = </label>
+        <InputNumber @bind-Value="@EvklidNumbers.B" Class="form-control little-form" id="b" style="width: 100px" min="0" max="999999999"></InputNumber>
     </div>
     <div class="row pb-1">
-        <button class="btn btn-nav" @onclick="@Calculation">Вычислить</button>
+        <button class="btn btn-nav" @onclick="@Calculation">Найти</button>
     </div>
     <div class="row pb-1">
-        <label for="y" class="pr-2">y = </label>
-        <div class="form-control little-form" id="y" style="width: 100px">@OneEvklid.r</div>
+        <label class="pr-2">gcd(a, b) = </label>
+        <div class="form-control little-form" style="width: 100px">@EvklidNumbers.R</div>
     </div>
-    @*<div class="row pb-1">
+    <div class="row pb-1">
+        <label class="pr-2">x = </label>
+        <div class="form-control little-form" style="width: 100px">@mX</div>
+    </div>
+    <div class="row pb-1">
+        <label class="pr-2">y = </label>
+        <div class="form-control little-form" style="width: 100px">@mY</div>
+    </div>
+    <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
         <div class="form-control little-form" style="width: 100px">
-            @(OneEvklid.r.ToString() == Check ? "Успех" : "Ошибка")
+            @(Check ? "Успех" : "Ошибка")
         </div>
-    </div>*@
-    @*<div class="form-group">
-            <label for="Result">Ответ:</label>
-            <div Class="form-control" id="Result" style="width: 200px">@NumberToPower.y</div>
+    </div>
+    @if (!mIsShowTable)
+    {
+        <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
+    }
+    else
+    {
+        <div>
+            <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
         </div>
-        <div class="form-group">
-            <label for="Result">Проверка:</label>
-            <div Class="form-control" id="Result" style="width: 200px">@Check</div>
-        </div>*@
+        <div>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>U</th>
+                        <th>V</th>
+                        <th>T</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var model in TablEvklid)
+                    {
+                        <tr>
+                            <td>@model.U?.ToString()</td>
+                            <td>@model.V?.ToString()</td>
+                            <td>@model.T?.ToString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </EditForm>
 
 @code {
-    Evklid OneEvklid { get; set; }
-    string Check { get; set; }
+    Evklid EvklidNumbers { get; set; } = new Evklid();
+    long mX, mY;
+    bool mIsShowTable = false;
+
+    List<GeneralizedEvklid> TablEvklid { get; set; } = new List<GeneralizedEvklid>();
+
+    bool Check = true;
 
     void Calculation()
     {
+        EvklidNumbers.R = Evklid(EvklidNumbers.A, EvklidNumbers.B);
+    }
 
+    long Evklid(long a, long b)
+    {
+        if (a < b)
+        {
+            var tmp = a;
+            a = b;
+            b = tmp;
+        }
+
+        TablEvklid.Add(new GeneralizedEvklid());
+        TablEvklid.Last().U = new Evklid(a, 1, 0);
+        TablEvklid.Last().V = new Evklid(b, 0, 1);
+
+        while (TablEvklid.Last().V.A != 0)
+        {
+            var E = TablEvklid.Last();
+            var q = E.U.A / E.V.A;
+
+            E.T = new Evklid();
+            E.T.A = E.U.A % E.V.A;
+            E.T.B = E.U.B - (q * E.V.B);
+            E.T.R = E.U.R - (q * E.V.R);
+
+            TablEvklid.Add(new GeneralizedEvklid());
+            TablEvklid.Last().U = E.V;
+            TablEvklid.Last().V = E.T;
+        }
+
+        mX = TablEvklid.Last().U.B;
+        mY = TablEvklid.Last().U.R;
+        Check = ((a * mX) + (b * mY)) == TablEvklid.Last().U.A;
+        return TablEvklid.Last().U.A;
     }
 }
