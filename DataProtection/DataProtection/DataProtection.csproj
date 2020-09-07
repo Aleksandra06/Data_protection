@@ -13,4 +13,8 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataProtection.Engine\DataProtection.Engine.csproj" />
+  </ItemGroup>
+
 </Project>

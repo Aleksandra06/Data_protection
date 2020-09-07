@@ -50,20 +50,11 @@
         if (NumberToPower.p == 0)
         {
             return;
-        } else if (NumberToPower.p > 3) {
-
-            Boolean flag = false;
-            for (int i = 2; i < 10; i++) {
-                if (NumberToPower.p / i == 0) {
-                    flag = true;
-                }
-            }
-            if (flag) {
+        } else if (NumberToPower.p > 3 && (NumberToPower.p % 2 == 0 || NumberToPower.p % 3 == 0)) {
                 Check = "NO";
                 return;
-            }
         }
-
+    
         Check = System.Numerics.BigInteger.ModPow(NumberToPower.a, NumberToPower.x, NumberToPower.p).ToString();
         NumberToPower.y = Pow(NumberToPower.a, NumberToPower.x, NumberToPower.p);
     }
