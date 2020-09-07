@@ -1,16 +1,86 @@
 ﻿@using DataProtection.PageModels.Lab1
 
 <h5 class="pt-4">Функция построения общего ключа для двух абонентов по схеме Диффи-Хеллмана.</h5>
-
+<div class="pb-1">
+    <label class="pr-2">q = @q </label>
+    <label class="pr-2">p = @p </label>
+    <label class="pr-2">g = @g </label>
+</div>
 <div class="row">
-    <div class="col-6">
-
+    <div class="col-6 pl-0">
+        <EditForm Model="@APerson">
+            <label class="pr-2">Абонент А</label>
+            <div class="row pb-1">
+                <label class="pr-2">Секретный ключ: </label>
+                <InputNumber @bind-Value="@APerson.X" Class="form-control little-form" style="width: 200px" min="0" max="999999999"></InputNumber>
+            </div>
+            <div class="row pb-1">
+                <label class="pr-2">Открытый ключ: </label>
+                <div class="form-control little-form" style="width: 100px">@OpenKeyA()</div>
+            </div>
+        </EditForm>
     </div>
-    <div class="col-6">
 
+    <div class="col-6">
+        <EditForm Model="@BPerson">
+            <label class="pr-2">Абонент B</label>
+            <div class="row pb-1">
+                <label class="pr-2">Секретный ключ: </label>
+                <InputNumber @bind-Value="@BPerson.X" Class="form-control little-form" style="width: 200px" min="0" max="999999999"></InputNumber>
+            </div>
+            <div class="row pb-1">
+                <label class="pr-2">Открытый ключ: </label>
+                <div class="form-control little-form" style="width: 100px">@OpenKeyB()</div>
+            </div>
+        </EditForm>
     </div>
 </div>
 
+<div class="row pb-1">
+    <button class="btn btn-nav" @onclick="@Calculation">Найти</button>
+</div>
+
+
 @code {
+    Diffi_Hellman APerson { get; set; } = new Diffi_Hellman();
+    Diffi_Hellman BPerson { get; set; } = new Diffi_Hellman();
+
+    const long q = 11;
+    long p;
+    long g;
+
+    protected override void OnInitialized()
+    {
+        p = q * 2 + 1;
+        for (int i = 2; i < p - 1; i++)
+        {
+            var tmp = (long)System.Numerics.BigInteger.ModPow(i, q, p);
+            if (p != 1)
+            {
+                g = i;
+                break;
+            }
+        }
+    }
+
+    void Calculation()
+    {
+
+    }
+
+    long OpenKeyA()
+    {
+        if (APerson.X < 0 || APerson.X > 999999999) return APerson.Y;
+        var tmp = (long)System.Numerics.BigInteger.ModPow(g, APerson.X, p);
+        APerson.Y = tmp;
+        return tmp;
+    }
+    long OpenKeyB()
+    {
+        if (BPerson.X < 0 || BPerson.X > 999999999) return BPerson.Y;
+        var tmp = (long)System.Numerics.BigInteger.ModPow(g, BPerson.X, p);
+        BPerson.Y = tmp;
+        return tmp;
+    }
 
 }

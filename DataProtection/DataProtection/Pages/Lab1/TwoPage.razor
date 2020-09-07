@@ -1,7 +1,7 @@
 ﻿@using DataProtection.PageModels.Lab1
 <h5 class="pt-4">Функция, реализующая обобщённый алгоритм Евклида. Функция должна позволять находить наибольший общий делитель и обе неизвестных из уравнения.</h5>
 
-<h6>ax + by = gcd(a, b)<br/></h6>
+<h6>ax + by = gcd(a, b)<br /></h6>
 
 <EditForm Model="EvklidNumbers">
     <div class="row pb-1">
@@ -15,56 +15,57 @@
     <div class="row pb-1">
         <button class="btn btn-nav" @onclick="@Calculation">Найти</button>
     </div>
-    <div class="row pb-1">
-        <label class="pr-2">gcd(a, b) = </label>
-        <div class="form-control little-form" style="width: 100px">@EvklidNumbers.R</div>
-    </div>
-    <div class="row pb-1">
-        <label class="pr-2">x = </label>
-        <div class="form-control little-form" style="width: 100px">@mX</div>
-    </div>
-    <div class="row pb-1">
-        <label class="pr-2">y = </label>
-        <div class="form-control little-form" style="width: 100px">@mY</div>
-    </div>
-    <div class="row pb-1">
-        <label class="pr-2">Проверка: </label>
-        <div class="form-control little-form" style="width: 100px">
-            @(Check ? "Успех" : "Ошибка")
-        </div>
-    </div>
-    @if (!mIsShowTable)
-    {
-        <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
-    }
-    else
-    {
-        <div>
-            <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
-        </div>
-        <div>
-            <table class="table table-sm">
-                <thead>
-                    <tr>
-                        <th>U</th>
-                        <th>V</th>
-                        <th>T</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var model in TablEvklid)
-                    {
-                        <tr>
-                            <td>@model.U?.ToString()</td>
-                            <td>@model.V?.ToString()</td>
-                            <td>@model.T?.ToString()</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
 </EditForm>
+
+<div class="row pb-1">
+    <label class="pr-2">gcd(a, b) = </label>
+    <div class="form-control little-form" style="width: 100px">@EvklidNumbers.R</div>
+</div>
+<div class="row pb-1">
+    <label class="pr-2">x = </label>
+    <div class="form-control little-form" style="width: 100px">@mX</div>
+</div>
+<div class="row pb-1">
+    <label class="pr-2">y = </label>
+    <div class="form-control little-form" style="width: 100px">@mY</div>
+</div>
+<div class="row pb-1">
+    <label class="pr-2">Проверка: </label>
+    <div class="form-control little-form" style="width: 100px">
+        @(Check ? "Успех" : "Ошибка")
+    </div>
+</div>
+@if (!mIsShowTable)
+{
+    <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
+}
+else
+{
+    <div>
+        <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
+    </div>
+    <div>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>U</th>
+                    <th>V</th>
+                    <th>T</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var model in TablEvklid)
+                {
+                    <tr>
+                        <td>@model.U?.ToString()</td>
+                        <td>@model.V?.ToString()</td>
+                        <td>@model.T?.ToString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
 
 @code {
     Evklid EvklidNumbers { get; set; } = new Evklid();
