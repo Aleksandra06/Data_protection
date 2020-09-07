@@ -26,8 +26,8 @@
     </div>
     <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
-        <div class="form-control little-form" style="width: 100px">
-            @(NumberToPower.y.ToString() == Check ? "Успех" : "Ошибка")
+        <div class="form-control little-form" style="width: 120px">
+            @(NumberToPower.y.ToString() == Check ? "Успех" : Check == "NO" ? "Не простое" : "Ошибка")
         </div>
     </div>
     @*<div class="form-group">
@@ -50,6 +50,18 @@
         if (NumberToPower.p == 0)
         {
             return;
+        } else if (NumberToPower.p > 3) {
+
+            Boolean flag = false;
+            for (int i = 2; i < 10; i++) {
+                if (NumberToPower.p / i == 0) {
+                    flag = true;
+                }
+            }
+            if (flag) {
+                Check = "NO";
+                return;
+            }
         }
 
         Check = System.Numerics.BigInteger.ModPow(NumberToPower.a, NumberToPower.x, NumberToPower.p).ToString();
