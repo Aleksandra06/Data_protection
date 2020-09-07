@@ -1,7 +1,8 @@
 ﻿@using DataProtection.PageModels.Lab1
 <h5 class="pt-4">Функция, реализующая обобщённый алгоритм Евклида. Функция должна позволять находить наибольший общий делитель и обе неизвестных из уравнения.</h5>
 
-<h7>ax + by = gcd(a, b)</h7>
+<h6>ax + by = gcd(a, b)<br/></h6>
+
 <EditForm Model="EvklidNumbers">
     <div class="row pb-1">
         <label class="pr-2">a = </label>
@@ -76,6 +77,7 @@
 
     void Calculation()
     {
+        TablEvklid.Clear();
         EvklidNumbers.R = Evklid(EvklidNumbers.A, EvklidNumbers.B);
     }
 
