@@ -35,31 +35,77 @@
         @(Check ? "Успех" : "Ошибка")
     </div>
 </div>
-@if (!mIsShowTable)
-{
+@if (!mIsShowTable) {
     <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
-}
-else
-{
+} else {
     <div>
         <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
     </div>
-    <div>
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>U</th>
-                    <th>V</th>
-                    <th>T</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var model in TablEvklid)
-                {
+    @*    <div>
+            <table class="table table-sm">
+                <thead>
                     <tr>
-                        <td>@model.U?.ToString()</td>
-                        <td>@model.V?.ToString()</td>
-                        <td>@model.T?.ToString()</td>
+                        <th>U</th>
+                        <th>V</th>
+                        <th>T</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var model in TablEvklid)
+                    {
+                        <tr>
+                            <td>@model.U?.ToString()</td>
+                            <td>@model.V?.ToString()</td>
+                            <td>@model.T?.ToString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>*@
+    <div style="float: left; width: 10%">
+        <table class="table table-sm">
+            <tbody>
+                <tr>
+                    <td>U</td>
+                </tr>
+                <tr>
+                    <td>V</td>
+                    <td>U</td>
+                </tr>
+
+                @for (int i = 0; i < TablEvklid.Count - 2; i++) {
+                    <tr>
+                        @for (int j = 0; j < i; j++) {
+                            <td> </td>
+                        }
+                        <td>T</td>
+                        <td>V</td>
+                        <td>U</td>
+                    </tr>
+                }
+                <tr>
+                    @for (int j = 0; j < TablEvklid.Count - 2; j++) {
+                        <td> </td>
+                    }
+                    <td>T</td>
+                    <td>V</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="float: right; width: 90%">
+        <table class="table table-sm">
+            <tbody>
+                <tr>
+                    <td>@TablEvklid.First().U.ToString()</td>
+                </tr>
+                <tr>
+                    <td>@TablEvklid.First().V.ToString()</td>
+                </tr>
+               
+                @foreach (var model in TablEvklid) {
+                    <tr>
+                        <td>@model.T?.ToString()</td>            
                     </tr>
                 }
             </tbody>
@@ -67,10 +113,14 @@ else
     </div>
 }
 
+
+
 @code {
     Evklid EvklidNumbers { get; set; } = new Evklid();
     long mX, mY;
     bool mIsShowTable = false;
+    int num = 1;
+    long qForTableShow;
 
     List<GeneralizedEvklid> TablEvklid { get; set; } = new List<GeneralizedEvklid>();
 
@@ -84,8 +134,7 @@ else
 
     long Evklid(long a, long b)
     {
-        if (a < b)
-        {
+        if (a < b) {
             var tmp = a;
             a = b;
             b = tmp;
@@ -95,8 +144,7 @@ else
         TablEvklid.Last().U = new Evklid(a, 1, 0);
         TablEvklid.Last().V = new Evklid(b, 0, 1);
 
-        while (TablEvklid.Last().V.A != 0)
-        {
+        while (TablEvklid.Last().V.A != 0) {
             var E = TablEvklid.Last();
             var q = E.U.A / E.V.A;
 
@@ -108,11 +156,13 @@ else
             TablEvklid.Add(new GeneralizedEvklid());
             TablEvklid.Last().U = E.V;
             TablEvklid.Last().V = E.T;
+            num++;
         }
 
         mX = TablEvklid.Last().U.B;
         mY = TablEvklid.Last().U.R;
         Check = ((a * mX) + (b * mY)) == TablEvklid.Last().U.A;
+
         return TablEvklid.Last().U.A;
     }
 }
