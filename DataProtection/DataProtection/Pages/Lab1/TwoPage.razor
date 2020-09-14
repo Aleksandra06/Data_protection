@@ -35,6 +35,8 @@
         @(Check ? "Успех" : "Ошибка")
     </div>
 </div>
+<button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button><br><br>
+
 @if (!mIsShowTable) {
     <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
 } else {
@@ -121,6 +123,8 @@
     bool mIsShowTable = false;
     int num = 1;
     long qForTableShow;
+    int MAX = 100;
+    Boolean flag = false;
 
     List<GeneralizedEvklid> TablEvklid { get; set; } = new List<GeneralizedEvklid>();
 
@@ -164,5 +168,14 @@
         Check = ((a * mX) + (b * mY)) == TablEvklid.Last().U.A;
 
         return TablEvklid.Last().U.A;
+    }
+    public void generateRandom()
+    {
+        flag = false;
+        var rand = new Random();
+        do {
+            EvklidNumbers.A = rand.Next(MAX);
+            EvklidNumbers.B = rand.Next(MAX);
+        } while (EvklidNumbers.A < EvklidNumbers.B);
     }
 }

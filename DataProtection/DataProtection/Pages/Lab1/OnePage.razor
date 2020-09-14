@@ -24,6 +24,8 @@
         <label for="y" class="pr-2">y = </label>
         <div class="form-control little-form" id="y" style="width: 100px">@NumberToPower.y</div>
     </div>
+    <button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button><br><br>
+
     <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
         <div class="form-control little-form" style="width: 120px">
@@ -44,6 +46,8 @@
 
     NumbersToPower NumberToPower { get; set; } = new NumbersToPower();
     string Check { get; set; }
+    int MAX = 100;
+    Boolean flag = false;
 
     void Calculation()
     {
@@ -51,10 +55,10 @@
         {
             return;
         } else if (NumberToPower.p > 3 && (NumberToPower.p % 2 == 0 || NumberToPower.p % 3 == 0)) {
-                Check = "NO";
-                return;
+            Check = "NO";
+            return;
         }
-    
+
         Check = System.Numerics.BigInteger.ModPow(NumberToPower.a, NumberToPower.x, NumberToPower.p).ToString();
         NumberToPower.y = Pow(NumberToPower.a, NumberToPower.x, NumberToPower.p);
     }
@@ -88,4 +92,34 @@
 
         return y % p;
     }
+
+    public void generateRandom()
+    {
+        flag = false;
+        var rand = new Random();
+        NumberToPower.a = rand.Next(MAX);
+
+        int currentP;
+        do {
+            currentP = rand.Next(MAX);
+        } while (!isPrime(currentP));
+        NumberToPower.p = currentP;
+        do {
+            NumberToPower.x = rand.Next(MAX);
+        } while (NumberToPower.x >= NumberToPower.p);
+    }
+
+    bool isPrime(long p)
+    {
+        if (p <= 1) return false;
+
+        int b = (int)Math.Pow(p, 0.5);
+
+        for (int i = 2; i <= b; ++i) {
+            if ((p % i) == 0) return false;
+        }
+
+        return true;
+    }
+
 }

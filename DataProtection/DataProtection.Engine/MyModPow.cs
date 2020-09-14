@@ -4,9 +4,9 @@ using System.Text;
 
 namespace DataProtection.Engine
 {
-    class MyModPow
+    public class MyModPow
     {
-        long Pow(long a, int x, int p)
+        public long Pow(long a, long x, long p)
         {
             var y = new long();
             var s = new long();
