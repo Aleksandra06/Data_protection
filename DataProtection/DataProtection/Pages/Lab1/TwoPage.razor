@@ -12,10 +12,14 @@
         <label class="pr-2">b = </label>
         <InputNumber @bind-Value="@EvklidNumbers.B" Class="form-control little-form" id="b" style="width: 100px" min="0" max="999999999"></InputNumber>
     </div>
-    <div class="row pb-1">
-        <button class="btn btn-nav" @onclick="@Calculation">Найти</button>
-    </div>
 </EditForm>
+
+<div class="row pb-1">
+    <button @onclick="@generateRandom" class="btn btn-nav">Сгенерировать</button>
+</div>
+<div class="row pb-4">
+    <button class="btn btn-nav" @onclick="@Calculation">Найти</button>
+</div>
 
 <div class="row pb-1">
     <label class="pr-2">gcd(a, b) = </label>
@@ -29,20 +33,19 @@
     <label class="pr-2">y = </label>
     <div class="form-control little-form" style="width: 100px">@mY</div>
 </div>
-<div class="row pb-1">
+<div class="row pb-4">
     <label class="pr-2">Проверка: </label>
     <div class="form-control little-form" style="width: 100px">
         @(Check ? "Успех" : "Ошибка")
     </div>
 </div>
 
-<button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button>
-<br>
-<br>
-
-@if (!mIsShowTable) {
+@if (!mIsShowTable)
+{
     <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
-} else {
+}
+else
+{
     <div>
         <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
     </div>
@@ -67,9 +70,10 @@
                 </tbody>
             </table>
         </div>*@
-    @if (TablEvklid != null && TablEvklid?.Count != 0) {         
+    @if (TablEvklid != null && TablEvklid?.Count != 0)
+    {
         <div style="float: left; width: 30%">
-            
+
             <table class="table table-sm">
                 <tbody>
                     <tr>
@@ -80,9 +84,11 @@
                         <td>U</td>
                     </tr>
 
-                    @for (int i = 0; i < TablEvklid.Count - 2; i++) {
+                    @for (int i = 0; i < TablEvklid.Count - 2; i++)
+                    {
                         <tr>
-                            @for (int j = 0; j < i; j++) {
+                            @for (int j = 0; j < i; j++)
+                            {
                                 <td> </td>
                             }
                             <td>T</td>
@@ -91,7 +97,8 @@
                         </tr>
                     }
                     <tr>
-                        @for (int j = 0; j < TablEvklid.Count - 2; j++) {
+                        @for (int j = 0; j < TablEvklid.Count - 2; j++)
+                        {
                             <td> </td>
                         }
                         <td>T</td>
@@ -110,7 +117,8 @@
                         <td>@TablEvklid.First().V.ToString()</td>
                     </tr>
 
-                    @foreach (var model in TablEvklid) {
+                    @foreach (var model in TablEvklid)
+                    {
                         <tr>
                             <td>@model.T?.ToString() </td>
                         </tr>
@@ -118,7 +126,9 @@
                 </tbody>
             </table>
         </div>
-    } else {
+    }
+    else
+    {
         <div>Таблица пуста!</div>
     }
 }
@@ -147,7 +157,8 @@
 
     long Evklid(long a, long b)
     {
-        if (a < b) {
+        if (a < b)
+        {
             var tmp = a;
             a = b;
             b = tmp;
@@ -157,7 +168,8 @@
         TablEvklid.Last().U = new Evklid(a, 1, 0);
         TablEvklid.Last().V = new Evklid(b, 0, 1);
 
-        while (TablEvklid.Last().V.A != 0) {
+        while (TablEvklid.Last().V.A != 0)
+        {
             var E = TablEvklid.Last();
             var q = E.U.A / E.V.A;
 
@@ -182,7 +194,8 @@
     {
         flag = false;
         var rand = new Random();
-        do {
+        do
+        {
             EvklidNumbers.A = rand.Next(MAX);
             EvklidNumbers.B = rand.Next(MAX);
         } while (EvklidNumbers.A < EvklidNumbers.B);

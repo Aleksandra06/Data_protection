@@ -4,14 +4,13 @@
 <br>
 <h6>Трудоемкость работы функции должна соответствовать описанной в учебнике и составлять O(p * log (p))</h6>
 
-<img src="images/PowerMod.PNG" width="200px"/>
+<img src="images/PowerMod.PNG" width="200px" />
 
 
 <EditForm Model="myLog">
     <div style="margin-left: 105px">X</div>
     <InputNumber @bind-Value="@myLog.a" id="number_a" Class="form-control little-form" style="width: 100px; float: left;" min="1" max="999999999"></InputNumber>
-    <span style="margin-left: 20px; margin-right: 10px; float: left;
-">mod</span>
+    <span style="margin-left: 20px; margin-right: 10px; float: left;">mod</span>
     <InputNumber @bind-Value="@myLog.p" id="number_p" Class="form-control little-form" style="width: 100px; float: left;" min="1" max="999999999"></InputNumber>
     <span style="margin-left: 10px; margin-right: 10px; float: left;"> = </span>
     <InputNumber @bind-Value="@myLog.y" id="number_y" Class="form-control little-form" style="width: 100px; float: left;" min="1" max="999999999"></InputNumber>
@@ -28,63 +27,68 @@
     <button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button><br><br>
     <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
-        <div class="form-control little-form" style="width: 200px">
+        <div class="form-control little-form" style="width: 400px">
             @check = @iBaby * @myLog.m - @jGiant
         </div>
     </div>
 
-    @if (!mIsShowTable) {
+    @if (!mIsShowTable)
+    {
         <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
-    } else {
+    }
+    else
+    {
         <div>
             <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
         </div>
-            <table style="float: left;">
-                <thead>
+        <table style="float: left;">
+            <thead>
+                <tr>
+                    <td>
+                        Шаг
+                    </td>
+                    <td>
+                        Малыш
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @for (long i = 0; i < myLog.m; i++)
+                {
                     <tr>
-                        <td>
-                            Шаг
-                        </td>
-                        <td>
-                            Малыш
-                        </td>
+                        <td style="width: 100px">@i</td>
+                        <td style="width: 100px">@stepBabyShow[i]</td>
+                        <td style="width: 100px">@stepBaby.value[i]</td>
+                        @*<td style="width: 100px">@stepBaby.value[stepBaby.index[i]]</td>
+                            <td style="width: 100px">@stepBaby.index[i]</td>*@
                     </tr>
-                </thead>
-                <tbody>
-                    @for (long i = 0; i < myLog.m; i++) {
-                        <tr>
-                            <td style="width: 100px">@i</td>
-                            <td style="width: 100px">@stepBabyShow[i]</td>
-                            <td style="width: 100px">@stepBaby.value[i]</td>
-                            @*<td style="width: 100px">@stepBaby.value[stepBaby.index[i]]</td>
-                                <td style="width: 100px">@stepBaby.index[i]</td>*@
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <table>
-                <thead>
+                }
+            </tbody>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                    <td>
+                        Шаг
+                    </td>
+                    <td>
+                        Гигант
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @for (long i = 1; i <= myLog.k; i++)
+                {
                     <tr>
-                        <td>
-                            Шаг
-                        </td>
-                        <td>
-                            Гигант
-                        </td>
+                        <td style="width: 100px">@i</td>
+                        <td style="width: 100px">@stepGiant[i]</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @for (long i = 1; i <= myLog.k; i++) {
-                        <tr>
-                            <td style="width: 100px">@i</td>
-                            <td style="width: 100px">@stepGiant[i]</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                }
+            </tbody>
+        </table>
     }
 
-    </EditForm>
+</EditForm>
 
 @code {
     DisLog myLog { get; set; } = new DisLog();
@@ -109,21 +113,32 @@
 
     void calculator()
     {
+        if (myLog.a < 1 || myLog.p < 1 || myLog.y < 1 || myLog.m < 1 || myLog.k < 1)
+        {
+            return;
+        }
 
         stepBG(myLog.a, myLog.y, myLog.p, myLog.m, myLog.k);
-        do {
-            if (!flagOnOne) {
+        do
+        {
+            if (!flagOnOne)
+            {
                 myLog.m++;
                 flagOnOne = true;
-            } else if (!flagOnTwo) {
+            }
+            else if (!flagOnTwo)
+            {
                 myLog.k++;
                 flagOnTwo = true;
-            } else if (flagOnTwo && flagOnTwo) {
+            }
+            else if (flagOnTwo && flagOnTwo)
+            {
                 flagOnOne = false;
                 flagOnTwo = false;
             }
             stepBG(myLog.a, myLog.y, myLog.p, myLog.m, myLog.k);
         } while (iBaby == -1 || jGiant == -1);
+        StateHasChanged();
     }
 
     public long stepBG(long a, long y, long p, long m, long k)
@@ -135,13 +150,15 @@
         stepGiant = new long[k + 1];
         index = new long[m];
 
-        for (int i = 0; i < m; i++) {
+        for (int i = 0; i < m; i++)
+        {
             index[i] = i;
             stepBaby.index[i] = i;
         }
 
         stepBaby.value[0] = stepBabyShow[0] = y;
-        for (long i = 1; i < m; i++) {
+        for (long i = 1; i < m; i++)
+        {
             stepBaby.value[i] = (Power.Pow(a, i, p) * y) % p;
             stepBabyShow[i] = stepBaby.value[i];
         }
@@ -150,10 +167,12 @@
 
 
         stepGiant[0] = 1;
-        for (long i = 1; i <= k; i++) {
+        for (long i = 1; i <= k; i++)
+        {
             stepGiant[i] = Power.Pow(a, i * m, p);
             iBaby = binSearch(stepBaby, stepGiant[i], 0, m);
-            if (iBaby > -1) {
+            if (iBaby > -1)
+            {
                 jGiant = i;
                 break;
             }
@@ -168,13 +187,15 @@
         myLog.a = rand.Next(2, MAX);
 
         int currentP;
-        do {
+        do
+        {
             currentP = rand.Next(2, MAX);
         } while (!isPrime(currentP));
         myLog.p = currentP;
 
         int currentY;
-        do {
+        do
+        {
             currentY = rand.Next(1, MAX);
         } while (currentY >= myLog.p);
         myLog.y = currentY;
@@ -183,26 +204,31 @@
         myLog.k = myLog.m;
     }
 
-    bool isPrime(long p) {
+    bool isPrime(long p)
+    {
         if (p <= 1) return false;
 
         int b = (int)Math.Pow(p, 0.5);
 
-        for (int i = 2; i <= b; ++i) {
+        for (int i = 2; i <= b; ++i)
+        {
             if ((p % i) == 0) return false;
         }
 
         return true;
     }
 
-    static void sorting(StepBaby arr, long first, long last) {
+    static void sorting(StepBaby arr, long first, long last)
+    {
         long p = arr.value[(last - first) / 2 + first];
         long temp;
         long i = first, j = last;
-        while (i <= j) {
+        while (i <= j)
+        {
             while (arr.value[i] < p && i <= last) ++i;
             while (arr.value[j] > p && j >= first) --j;
-            if (i <= j) {
+            if (i <= j)
+            {
                 temp = arr.index[i];
                 arr.index[i] = arr.index[j];
                 arr.index[j] = temp;
@@ -217,15 +243,22 @@
         if (i < last) sorting(arr, i, last);
     }
 
-    static long binSearch(StepBaby array, long searchedValue, long left, long right) {
-        while (left < right) {
+    static long binSearch(StepBaby array, long searchedValue, long left, long right)
+    {
+        while (left < right)
+        {
             long middle = (left + right) / 2;
 
-            if (searchedValue == array.value[middle]) {
+            if (searchedValue == array.value[middle])
+            {
                 return array.index[middle];
-            } else if (searchedValue < array.value[middle]) {
+            }
+            else if (searchedValue < array.value[middle])
+            {
                 right = middle - 1;
-            } else {
+            }
+            else
+            {
                 left = middle + 1;
             }
         }
