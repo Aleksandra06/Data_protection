@@ -36,13 +36,13 @@
     </div>
 </div>
 
-<button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button><br><br>
+<button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button>
+<br>
+<br>
 
 @if (!mIsShowTable) {
     <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
-}
-else
-{
+} else {
     <div>
         <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
     </div>
@@ -67,9 +67,9 @@ else
                 </tbody>
             </table>
         </div>*@
-    @if (TablEvklid != null && TablEvklid?.Count != 0)
-    {
-        <div style="float: left; width: 10%">
+    @if (TablEvklid != null && TablEvklid?.Count != 0) {         
+        <div style="float: left; width: 30%">
+            
             <table class="table table-sm">
                 <tbody>
                     <tr>
@@ -80,11 +80,9 @@ else
                         <td>U</td>
                     </tr>
 
-                    @for (int i = 0; i < TablEvklid.Count - 2; i++)
-                    {
+                    @for (int i = 0; i < TablEvklid.Count - 2; i++) {
                         <tr>
-                            @for (int j = 0; j < i; j++)
-                            {
+                            @for (int j = 0; j < i; j++) {
                                 <td> </td>
                             }
                             <td>T</td>
@@ -93,8 +91,7 @@ else
                         </tr>
                     }
                     <tr>
-                        @for (int j = 0; j < TablEvklid.Count - 2; j++)
-                        {
+                        @for (int j = 0; j < TablEvklid.Count - 2; j++) {
                             <td> </td>
                         }
                         <td>T</td>
@@ -103,7 +100,7 @@ else
                 </tbody>
             </table>
         </div>
-        <div style="float: right; width: 90%">
+        <div style="float: left; width: 10%">
             <table class="table table-sm">
                 <tbody>
                     <tr>
@@ -113,8 +110,7 @@ else
                         <td>@TablEvklid.First().V.ToString()</td>
                     </tr>
 
-                    @foreach (var model in TablEvklid)
-                    {
+                    @foreach (var model in TablEvklid) {
                         <tr>
                             <td>@model.T?.ToString() </td>
                         </tr>
@@ -122,12 +118,11 @@ else
                 </tbody>
             </table>
         </div>
-    }
-    else
-    {
+    } else {
         <div>Таблица пуста!</div>
     }
 }
+
 
 
 
@@ -152,8 +147,7 @@ else
 
     long Evklid(long a, long b)
     {
-        if (a < b)
-        {
+        if (a < b) {
             var tmp = a;
             a = b;
             b = tmp;
@@ -163,8 +157,7 @@ else
         TablEvklid.Last().U = new Evklid(a, 1, 0);
         TablEvklid.Last().V = new Evklid(b, 0, 1);
 
-        while (TablEvklid.Last().V.A != 0)
-        {
+        while (TablEvklid.Last().V.A != 0) {
             var E = TablEvklid.Last();
             var q = E.U.A / E.V.A;
 

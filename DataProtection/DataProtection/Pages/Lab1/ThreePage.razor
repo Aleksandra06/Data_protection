@@ -1,4 +1,5 @@
 ﻿@using DataProtection.PageModels.Lab1
+@using DataProtection.Engine
 
 <h5 class="pt-4">Функция построения общего ключа для двух абонентов по схеме Диффи-Хеллмана.</h5>
 <div class="pb-1">
@@ -12,7 +13,7 @@
             <label class="pr-2">Абонент А</label>
             <div class="row pb-1">
                 <label class="pr-2">Секретный ключ: </label>
-                <InputNumber @bind-Value="@APerson.X" Class="form-control little-form" style="width: 200px" min="0" max="999999999"></InputNumber>
+                <InputNumber @bind-Value="@APerson.X" Class="form-control little-form" style="width: 200px" min="1" max="999999999"></InputNumber>
             </div>
             <div class="row pb-1">
                 <label class="pr-2">Открытый ключ: </label>
@@ -26,7 +27,7 @@
             <label class="pr-2">Абонент B</label>
             <div class="row pb-1">
                 <label class="pr-2">Секретный ключ: </label>
-                <InputNumber @bind-Value="@BPerson.X" Class="form-control little-form" style="width: 200px" min="0" max="999999999"></InputNumber>
+                <InputNumber @bind-Value="@BPerson.X" Class="form-control little-form" style="width: 200px" min="1" max="999999999"></InputNumber>
             </div>
             <div class="row pb-1">
                 <label class="pr-2">Открытый ключ: </label>
@@ -35,9 +36,18 @@
         </EditForm>
     </div>
 </div>
+<button @onclick="@generateRandom" class="btn btn-nav" style="float: left; margin-left: 10px;">Сгенерировать</button>
+<button @onclick="@computeG" class="btn btn-nav" style="margin-left: 10px;">Новые p q g</button><br><br>
 
 <div class="row pb-1">
     <button class="btn btn-nav" @onclick="@Calculation">Найти</button>
+</div>
+
+<div class="row pb-1">
+    <label class="pr-2">Проверка: </label>
+    <div class="form-control little-form" style="width: 200px">
+        Zab = @APerson.Z = Zba = @BPerson.Z
+    </div>
 </div>
 
 
@@ -45,42 +55,99 @@
     Diffi_Hellman APerson { get; set; } = new Diffi_Hellman();
     Diffi_Hellman BPerson { get; set; } = new Diffi_Hellman();
 
-    const long q = 11;
+    MyModPow modPow { get; set; } = new MyModPow();
+
+    long q = 11;
     long p;
     long g;
+
+    bool flag = false;
+    int MAX = 100;
 
     protected override void OnInitialized()
     {
         p = q * 2 + 1;
-        for (int i = 2; i < p - 1; i++)
-        {
-            var tmp = (long)System.Numerics.BigInteger.ModPow(i, q, p);
-            if (p != 1)
-            {
+        for (int i = 2; i < p - 1; i++) {
+            var tmp = modPow.Pow(i, q, p);
+            if (tmp != 1) {
                 g = i;
                 break;
             }
         }
     }
 
+    public void computeG()
+    {
+        int k = 20;
+        var rand = new Random();
+
+        long currentP;
+        long currentQ;
+        do {
+            do {
+                currentQ = rand.Next(2, 100);
+            } while (!isPrime(currentQ, k));
+            q = currentQ;
+            currentP = q * 2 + 1;
+        } while (!isPrime(currentP, k));
+        p = currentP;
+        for (int i = 2; i < p - 1; i++) {
+            if (modPow.Pow(i, q, p) != 1) {
+                q = i;
+                break;
+            }
+        }
+        generateRandom();
+    }
+
+
+
     void Calculation()
     {
-
+        if (APerson.X == 0 && BPerson.X == 0) {
+            return;
+        }
+        APerson.Z = modPow.Pow(BPerson.Y, APerson.X, p);
+        BPerson.Z = modPow.Pow(APerson.Y, BPerson.X, p);
     }
 
     long OpenKeyA()
     {
-        if (APerson.X < 0 || APerson.X > 999999999) return APerson.Y;
-        var tmp = (long)System.Numerics.BigInteger.ModPow(g, APerson.X, p);
-        APerson.Y = tmp;
-        return tmp;
+        if (APerson.X < 0 || APerson.X > 999999999 || APerson.X >= p) return APerson.Y;
+
+        APerson.Y = modPow.Pow(g, APerson.X, p);
+
+        return APerson.Y;
     }
     long OpenKeyB()
     {
-        if (BPerson.X < 0 || BPerson.X > 999999999) return BPerson.Y;
-        var tmp = (long)System.Numerics.BigInteger.ModPow(g, BPerson.X, p);
-        BPerson.Y = tmp;
-        return tmp;
+        if (BPerson.X < 0 || BPerson.X > 999999999 || BPerson.X >= p) return BPerson.Y;
+        BPerson.Y = modPow.Pow(g, BPerson.X, p);
+        return BPerson.Y;
     }
 
+    public void generateRandom()
+    {
+        flag = false;
+        var rand = new Random();
+
+        APerson.X = rand.Next(1, (int)p - 1);
+        BPerson.X = rand.Next(1, (int)p - 1);
+    }
+
+    bool isPrime(long prime, int k)
+    {
+        Random rand = new Random();
+        Engine.Evklid myAlg = new Engine.Evklid();
+        if (prime == 2) return true;
+        if (prime % 2 == 0) return false;
+        for (int i = 0; i < k; i++) {
+            long a = rand.Next(1, (int)prime - 1);
+            if (myAlg.gcd(a, prime) != 1 || modPow.Pow(a, prime -1, prime) != 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

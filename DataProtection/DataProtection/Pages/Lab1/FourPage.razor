@@ -33,64 +33,58 @@
         </div>
     </div>
 
-
-    @if (flag) {
-        <table style="float: left;">
-            <thead>
-                <tr>
-                    <td>
-                        Шаг
-                    </td>
-                    <td>
-                        Малыш
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                @for (long i = 0; i < myLog.m; i++) {
-                <tr>
-                    <td style="width: 100px">@i</td>
-                    <td style="width: 100px">@stepBabyShow[i]</td>
-                    <td style="width: 100px">@stepBaby.value[i]</td>
-                    @*<td style="width: 100px">@stepBaby.value[stepBaby.index[i]]</td>
-        <td style="width: 100px">@stepBaby.index[i]</td>*@
-                </tr>
-                }
-            </tbody>
-        </table>
-        <table>
-            <thead>
-                <tr>
-                    <td>
-                        Шаг
-                    </td>
-                    <td>
-                        Гигант
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                @for (long i = 1; i <= myLog.k; i++) {
-                <tr>
-                    <td style="width: 100px">@i</td>
-                    <td style="width: 100px">@stepGiant[i]</td>
-                </tr>
-                }
-            </tbody>
-        </table>
-
+    @if (!mIsShowTable) {
+        <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = true; StateHasChanged(); })">Показать таблицу</button>
     } else {
-        <table>
-            <thead>
-                <tr>Ждем</tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div>
+            <button class="btn btn-nav" @onclick="@(() => { mIsShowTable = false; StateHasChanged(); })">Спрятать таблицу</button>
+        </div>
+            <table style="float: left;">
+                <thead>
+                    <tr>
+                        <td>
+                            Шаг
+                        </td>
+                        <td>
+                            Малыш
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (long i = 0; i < myLog.m; i++) {
+                        <tr>
+                            <td style="width: 100px">@i</td>
+                            <td style="width: 100px">@stepBabyShow[i]</td>
+                            <td style="width: 100px">@stepBaby.value[i]</td>
+                            @*<td style="width: 100px">@stepBaby.value[stepBaby.index[i]]</td>
+                                <td style="width: 100px">@stepBaby.index[i]</td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <table>
+                <thead>
+                    <tr>
+                        <td>
+                            Шаг
+                        </td>
+                        <td>
+                            Гигант
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (long i = 1; i <= myLog.k; i++) {
+                        <tr>
+                            <td style="width: 100px">@i</td>
+                            <td style="width: 100px">@stepGiant[i]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
     }
 
-
-</EditForm>
+    </EditForm>
 
 @code {
     DisLog myLog { get; set; } = new DisLog();
@@ -102,20 +96,34 @@
         public long[] index;
     };
     StepBaby stepBaby = new StepBaby();
+    bool mIsShowTable = false;
 
     long[] stepBabyShow;
     long[] stepGiant;
     long[] index;
-    long iBaby = 0, jGiant = 0;
+    long iBaby = -1, jGiant = -1;
+    int MAX = 100;
 
-    Boolean flag = false;
-    int MAX = 20;
+    bool flagOnOne = false;
+    bool flagOnTwo = false;
 
     void calculator()
     {
-        flag = false;
-        check = stepBG(myLog.a, myLog.y, myLog.p, myLog.m, myLog.k);
-        flag = true;
+
+        stepBG(myLog.a, myLog.y, myLog.p, myLog.m, myLog.k);
+        do {
+            if (!flagOnOne) {
+                myLog.m++;
+                flagOnOne = true;
+            } else if (!flagOnTwo) {
+                myLog.k++;
+                flagOnTwo = true;
+            } else if (flagOnTwo && flagOnTwo) {
+                flagOnOne = false;
+                flagOnTwo = false;
+            }
+            stepBG(myLog.a, myLog.y, myLog.p, myLog.m, myLog.k);
+        } while (iBaby == -1 || jGiant == -1);
     }
 
     public long stepBG(long a, long y, long p, long m, long k)
@@ -150,23 +158,27 @@
                 break;
             }
         }
-
-        return iBaby * m - jGiant;
+        check = iBaby * m - jGiant;
+        return check;
     }
 
     public void generateRandom()
     {
-        flag = false;
         var rand = new Random();
-        myLog.a = rand.Next(MAX);
+        myLog.a = rand.Next(2, MAX);
 
         int currentP;
         do {
-            currentP = rand.Next(MAX);
+            currentP = rand.Next(2, MAX);
         } while (!isPrime(currentP));
         myLog.p = currentP;
 
-        myLog.y = rand.Next(MAX);
+        int currentY;
+        do {
+            currentY = rand.Next(1, MAX);
+        } while (currentY >= myLog.p);
+        myLog.y = currentY;
+
         myLog.m = (long)Math.Ceiling(Math.Sqrt((double)myLog.p));
         myLog.k = myLog.m;
     }
@@ -206,7 +218,7 @@
     }
 
     static long binSearch(StepBaby array, long searchedValue, long left, long right) {
-        while (left <= right) {
+        while (left < right) {
             long middle = (left + right) / 2;
 
             if (searchedValue == array.value[middle]) {
