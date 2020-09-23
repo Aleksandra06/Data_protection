@@ -28,13 +28,13 @@
     <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
         <div class="form-control little-form" style="width: 400px">
-            @check = @iBaby * @myLog.m - @jGiant
+            @check = @jGiant * @myLog.m - @iBaby
         </div>
     </div>
     <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
         <div class="form-control little-form" style="width: 400px">
-           @hardPractice = @hardTeory   
+           @hardPractice &le; @hardTeory при больших p 
         </div>
     </div>
 
@@ -160,11 +160,11 @@
 
         stepBabyShow = new long[m];
         stepGiant = new long[k + 1];
-        index = new long[m];
+        //index = new long[m];
 
         for (int i = 0; i < m; i++)
         {
-            index[i] = i;
+            //index[i] = i;
             stepBaby.index[i] = i;
         }
 
@@ -189,7 +189,7 @@
                 break;
             }
         }
-        check = iBaby * m - jGiant;
+        check = jGiant * m - iBaby;
         return check;
     }
 
