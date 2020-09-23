@@ -27,7 +27,7 @@ namespace DataProtection.Engine
                     continue;
                 }
 
-                y *= s;
+                y = (s * y) % p;
             }
 
             return y % p;

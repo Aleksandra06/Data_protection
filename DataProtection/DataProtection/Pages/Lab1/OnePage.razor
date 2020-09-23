@@ -11,11 +11,11 @@
     </div>
     <div class="row pb-1">
         <label for="Power" class="pr-2">x = </label>
-        <InputNumber @bind-Value="@NumberToPower.x" Class="form-control little-form" id="Power" style="width: 100px" min="0" max="999999999"></InputNumber>
+        <InputNumber @bind-Value="@NumberToPower.x" Class="form-control little-form" id="Power" style="width: 200px" min="0" max="999999999"></InputNumber>
     </div>
     <div class="row pb-2">
         <label for="Mod" class="pr-2">p = </label>
-        <InputNumber @bind-Value="@NumberToPower.p" Class="form-control little-form" id="Mod" style="width: 100px" min="1" max="999999999"></InputNumber>
+        <InputNumber @bind-Value="@NumberToPower.p" Class="form-control little-form" id="Mod" style="width: 200px" min="1" max="999999999"></InputNumber>
     </div>
     <div class="row pb-1">
         <button @onclick="@generateRandom" class="btn btn-nav">Сгенерировать</button>
@@ -25,7 +25,7 @@
     </div>
     <div class="row pb-4">
         <label for="y" class="pr-2">y = </label>
-        <div class="form-control little-form" id="y" style="width: 100px">@NumberToPower.y</div>
+        <div class="form-control little-form" id="y" style="width: 200px">@NumberToPower.y</div>
     </div>
     <div class="row pb-1">
         <label class="pr-2">Проверка: </label>
@@ -47,7 +47,7 @@
 
     NumbersToPower NumberToPower { get; set; } = new NumbersToPower();
     string Check { get; set; }
-    int MAX = 100;
+    int MAX = 1000000000;
     Boolean flag = false;
 
     void Calculation()
@@ -66,10 +66,10 @@
         NumberToPower.y = Pow(NumberToPower.a, NumberToPower.x, NumberToPower.p);
     }
 
-    long Pow(long a, int x, int p)
+    long Pow(long a, long x, long p)
     {
-        var y = new long();
-        var s = new long();
+        long y = new long();
+        long s = new long();
         var bin = Convert.ToString(x, 2);
 
         y = 1;
@@ -90,7 +90,7 @@
                 continue;
             }
 
-            y *= s;
+            y = (s * y) % p;
         }
 
         return y % p;
@@ -100,17 +100,17 @@
     {
         flag = false;
         var rand = new Random();
-        NumberToPower.a = rand.Next(MAX);
+        NumberToPower.a = rand.Next(1, MAX - 1);
 
         int currentP;
         do
         {
-            currentP = rand.Next(MAX);
+            currentP = rand.Next(1, MAX - 1);
         } while (!isPrime(currentP));
         NumberToPower.p = currentP;
         do
         {
-            NumberToPower.x = rand.Next(MAX);
+            NumberToPower.x = rand.Next(1, MAX - 1);
         } while (NumberToPower.x >= NumberToPower.p);
     }
 

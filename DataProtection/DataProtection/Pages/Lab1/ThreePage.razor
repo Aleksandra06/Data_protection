@@ -64,7 +64,7 @@
     long g;
 
     bool flag = false;
-    int MAX = 100;
+    int MAX = 1000000000;
 
     protected override void OnInitialized()
     {
@@ -91,7 +91,7 @@
         {
             do
             {
-                currentQ = rand.Next(2, 100);
+                currentQ = rand.Next(2, MAX);
             } while (!isPrime(currentQ, k));
             q = currentQ;
             currentP = q * 2 + 1;
