@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace DataProtection.Engine
+namespace DataProtection.Engine.Managers
 {
     public class MyModPow
     {
