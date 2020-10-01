@@ -1,5 +1,23 @@
-﻿<h3>Шифр Шамира</h3>
+﻿@using DataProtection.PageModels
+<h3>Шифр Шамира</h3>
+
+<div class="row pb-4">
+    <button class="btn btn-nav" @onclick="@Encrypt">Зашифровать</button>
+</div>
+<div class="row pb-4">
+    <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
+</div>
 
 @code {
+    [Parameter] public DocumentModel Document { get; set; }
 
+    public void Encrypt()
+    {
+
+    }
+
+    public void Decode()
+    {
+
+    }
 }

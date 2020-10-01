@@ -7,11 +7,26 @@
 
 <h3>Lab 2</h3>
 <InputFile OnChange="HandleFileSelected"></InputFile>
-
+@if (showProgressBar)
+{
+    <div class="row mb-2">
+        <h3 class="mat-subtitle1">Progress</h3>
+        <MatProgressBar Progress="@progressValue"></MatProgressBar>
+    </div>
+}
+@if (FileErrorsList?.Count > 0)
+{
+    <div class="row mb-2">
+        @foreach (var i in FileErrorsList)
+        {
+            <span class="row">@i</span>
+        }
+    </div>
+}
 
 <MatTabGroup Style="background-color:white">
     <MatTab Label="Шифр Шамира">
-        <ShamirСipherPage />
+        <ShamirСipherPage Document="@Document" />
     </MatTab>
     <MatTab Label="Шифр Эль-Гамаля">
         <ElGamalCipherPage />
@@ -76,7 +91,7 @@
         if (file != null)
         {
             byte[] result;
-            MemoryStream SourceStream = await file.ReadAllAsync((int) file.Size);
+            MemoryStream SourceStream = await file.ReadAllAsync((int)file.Size);
             result = new byte[file.Data.Length];
             await SourceStream.ReadAsync(result, 0, (int)file.Data.Length);
 
