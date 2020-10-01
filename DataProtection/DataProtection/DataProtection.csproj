@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
+    <PackageReference Include="BlazorInputFile" Version="0.2.0" />
     <PackageReference Include="MatBlazor" Version="2.6.2" />
   </ItemGroup>
 

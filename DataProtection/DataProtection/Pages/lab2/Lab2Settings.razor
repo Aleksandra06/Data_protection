@@ -1,15 +1,189 @@
 ﻿@page "/lab2"
+@inject IJSRuntime JS
+@using BlazorInputFile
+@using System.IO
+@using System.Security.Cryptography
+@using DataProtection.PageModels
 
-<h3>Lab 1</h3>
+<h3>Lab 2</h3>
+<InputFile OnChange="HandleFileSelected"></InputFile>
+
 
 <MatTabGroup Style="background-color:white">
-    @*<MatTab Label="One">
-        <OnePage />
+    <MatTab Label="Шифр Шамира">
+        <ShamirСipherPage />
     </MatTab>
-    <MatTab Label="Two">
-        <TwoPage />
+    <MatTab Label="Шифр Эль-Гамаля">
+        <ElGamalCipherPage />
     </MatTab>
-    <MatTab Label="Three">
-        <ThreePage />
-    </MatTab>*@
+    <MatTab Label="Шифр Вернама">
+        <VernamCipherPage />
+    </MatTab>
+    <MatTab Label="Шифр RSA">
+        <RSACipherPage />
+    </MatTab>
 </MatTabGroup>
+
+@code {
+    protected List<string> FileErrorsList { get; set; }
+    protected bool showProgressBar { get; set; } = false;
+    protected double progressValue { get; set; }
+    protected DocumentModel Document { get; set; }
+
+    protected async void HandleFileSelected(IFileListEntry[] files)
+    {
+        FileErrorsList = new List<string>();
+        progressValue = 0.0;
+        showProgressBar = true;
+
+        if (files != null && files.Count() > 0)
+        {
+            double step = (double)1 / files.Count();
+            foreach (var file in files)
+            {
+                try
+                {
+                    if (file.Size > (2 * 1024 * 1024))  //2MB
+                    {
+                        FileErrorsList.Add($"File: {file.Name} don't uploaded, because size of file is more than 2MB");
+                    }
+                    else
+                    {
+                        var doc = await UploadFile(file);
+                        if (doc != null)
+                        {
+                            Document = doc;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    FileErrorsList.Add($"File: {file.Name} don't uploaded, because {e.Message}");
+                }
+                finally
+                {
+                    progressValue += step;
+                    StateHasChanged();
+                }
+            }
+        }
+        progressValue = 1.0;
+        showProgressBar = false;
+        StateHasChanged();
+    }
+    public async Task<DocumentModel> UploadFile(IFileListEntry file)
+    {
+        if (file != null)
+        {
+            byte[] result;
+            MemoryStream SourceStream = await file.ReadAllAsync((int) file.Size);
+            result = new byte[file.Data.Length];
+            await SourceStream.ReadAsync(result, 0, (int)file.Data.Length);
+
+            DocumentModel doc = new DocumentModel()
+            {
+                FileName = file.Name,
+                Data = result,
+                ContentType = file.Type
+            };
+
+            return doc;
+
+        }
+        return null;
+    }
+    //IFileListEntry file { get; set; }
+    //byte[] bytes { get; set; }
+    //MultipartFormDataContent content = new MultipartFormDataContent();
+    //MemoryStream ms = new MemoryStream();
+    // string fileTextContents { get; set; }
+    //async Task HandleFileSelected(IFileListEntry[] files)
+    //{
+    //    IFileListEntry file = files.FirstOrDefault();
+    //    //bytes = default(byte[]);
+    //    var reader = new StreamReader(file.Data);
+    //    var r = file.Data.CanRead;
+    //    byte[] inputBuffer = new byte[file.Data.Length];
+    //    file.Data.Read(inputBuffer, 0, inputBuffer.Length);
+
+    //    var _ms = new MemoryStream(inputBuffer);
+    //    bytes = _ms.ToArray();
+    //    //using (var streamReader = new MemoryStream())
+    //    //{
+    //    //    file.Data.CopyTo(streamReader);
+    //    //    bytes = streamReader.ToArray();
+    //    //}
+    //    //var str = await GetMd5ForFile(file);
+    //    // bytes = reader.CurrentEncoding.GetBytes(reader.ReadToEnd());
+    //    //fileTextContents = await reader.ReadToEndAsync();
+
+    //    //using (MemoryStream ms = new MemoryStream())
+    //    //{
+    //    //    file.Data.CopyTo(ms);
+    //    //    bytes = ms.ToArray();
+    //    //}
+    //    //using (BinaryReader br = new BinaryReader(file.Data))
+    //    //{
+    //    //    bytes = br.ReadBytes((int)file.Data.Length);
+    //    //}
+
+    //    StateHasChanged();
+    //}
+
+    //private async Task<string> GetMd5ForFile(IFileListEntry file) {
+    //    using (var md5 = MD5.Create()) {
+    //        var data = await file.ReadAllAsync();
+    //        return Convert.ToBase64String(md5.ComputeHash(data.ToArray()));
+    //    }
+    //}
+    //public static byte[] ReadToEnd(System.IO.Stream stream)
+    //{
+    //    long originalPosition = 0;
+
+    //    if(stream.CanSeek)
+    //    {
+    //        originalPosition = stream.Position;
+    //        stream.Position = 0;
+    //    }
+
+    //    try
+    //    {
+    //        byte[] readBuffer = new byte[4096];
+
+    //        int totalBytesRead = 0;
+    //        int bytesRead;
+
+    //        while ((bytesRead = stream.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
+    //        {
+    //            totalBytesRead += bytesRead;
+
+    //            if (totalBytesRead == readBuffer.Length)
+    //            {
+    //                int nextByte = stream.ReadByte();
+    //                if (nextByte != -1)
+    //                {
+    //                    byte[] temp = new byte[readBuffer.Length * 2];
+    //                    Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
+    //                    Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
+    //                    readBuffer = temp;
+    //                    totalBytesRead++;
+    //                }
+    //            }
+    //        }
+
+    //        byte[] buffer = readBuffer;
+    //        if (readBuffer.Length != totalBytesRead)
+    //        {
+    //            buffer = new byte[totalBytesRead];
+    //            Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+    //        }
+    //        return buffer;
+    //    }
+    //    finally
+    //    {
+    //        if(stream.CanSeek)
+    //        {
+    //            stream.Position = originalPosition;
+    //        }
+    //    }
+}

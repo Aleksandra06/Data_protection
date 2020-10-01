@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataProtection", "DataProtection\DataProtection.csproj", "{C92FAEAF-54AE-4FE1-A14B-F63AE201D930}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProtection.Engine", "DataProtection.Engine\DataProtection.Engine.csproj", "{26884C6E-0255-4BEB-88A2-D8DB647F39B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataProtection.Engine", "DataProtection.Engine\DataProtection.Engine.csproj", "{26884C6E-0255-4BEB-88A2-D8DB647F39B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
