@@ -2,6 +2,10 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/DataProtection",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:53424",
       "sslPort": 44381
@@ -16,12 +20,12 @@
       }
     },
     "DataProtection": {
-      "commandName": "Project",
+      "commandName": "IIS",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }

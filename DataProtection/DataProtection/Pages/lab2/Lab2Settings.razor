@@ -58,18 +58,18 @@
             {
                 try
                 {
-                    if (file.Size > (2 * 1024 * 1024))  //2MB
+                    //if (file.Size > (2 * 1024 * 1024))  //2MB
+                    //{
+                    //    FileErrorsList.Add($"File: {file.Name} don't uploaded, because size of file is more than 2MB");
+                    //}
+                    //else
+                    //{
+                    var doc = await UploadFile(file);
+                    if (doc != null)
                     {
-                        FileErrorsList.Add($"File: {file.Name} don't uploaded, because size of file is more than 2MB");
+                        Document = doc;
                     }
-                    else
-                    {
-                        var doc = await UploadFile(file);
-                        if (doc != null)
-                        {
-                            Document = doc;
-                        }
-                    }
+                    //}
                 }
                 catch (Exception e)
                 {
