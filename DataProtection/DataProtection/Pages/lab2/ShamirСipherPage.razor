@@ -1,4 +1,7 @@
 ﻿@using DataProtection.PageModels
+@using DataProtection.PageModels.lab2
+@using DataProtection.Engine.Managers
+
 <h3>Шифр Шамира</h3>
 
 <div class="row pb-4">
@@ -8,11 +11,62 @@
     <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
 </div>
 
+<div>
+    <button class="btn btn-nav" @onclick="@generate">Генерация</button>
+</div>
+
+<div>
+    @if (@checkPrint) {
+        <div>@Document.ContentType</div><br>
+        <div>@Document.FileName</div><br>
+        @*foreach (var doc in Document.Data) {
+                <div>@doc</div>
+            }*@
+    }
+    <div>p = @shamir.p</div>
+    <div>Ca = @shamir.ca</div>
+    <div>Da = @shamir.da</div>
+
+    <div>Check[1] = @shamir.cb</div>
+    
+</div>
+
 @code {
     [Parameter] public DocumentModel Document { get; set; }
+    public ShamirModel shamir { get; set; } = new ShamirModel();
+    bool checkPrint = false;
+
+    public void generate()
+    {
+        Random random = new Random();
+        IsPrime prime = new IsPrime();
+        long tmp;
+        do {
+            tmp = random.Next(1 << 29, 1 << 30);
+            //tmp = random.Next(1 << 2, 1 << 4);
+        } while (!prime.isPrime(tmp, 1 << 10));
+        shamir.p = (ulong)tmp;
+
+        Evklid evklid = new Evklid();
+        do {
+            tmp = random.Next(2, 1 << 29);
+            //tmp = random.Next(2, 1 << 2);
+        } while (!((tmp % 2 == 1) && (evklid.gcd((long)shamir.p - 1, tmp) == 1) && tmp < (long)shamir.p));
+        shamir.ca = (ulong)tmp;
+        shamir.da = (ulong)evklid.TablEvklid.Last().U.R;
+
+        MyModPow mod = new MyModPow();
+    }
 
     public void Encrypt()
     {
+        checkPrint = true;
+
+        // что взять за исходное сообщение
+        // Находим p
+        // Находим m [сколько байт за основу берем]
+        // Находим Са и Da
+        // Находим Сb и Da
 
     }
 

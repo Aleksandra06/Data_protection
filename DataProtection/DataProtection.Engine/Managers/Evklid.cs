@@ -6,9 +6,9 @@ namespace DataProtection.Engine.Managers
 {
     public class Evklid
     {
-        List<GeneralizedEvklid> TablEvklid { get; set; } = new List<GeneralizedEvklid>();
-        long mX, mY;
-        bool mCheck = true;
+        public List<GeneralizedEvklid> TablEvklid { get; set; } = new List<GeneralizedEvklid>();
+        public long mX, mY;
+        public bool mCheck = true;
 
         public long gcd(long a, long b)
         {
