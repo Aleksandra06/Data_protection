@@ -10,8 +10,10 @@ namespace DataProtection.Engine.Managers
         public long mX, mY;
         public bool mCheck = true;
 
-        public long gcd(long a, long b)
+        public long gcd(long _a, long _b)
         {
+            var a = _a;
+            var b = _b;
             if (a < b) {
                 var tmp = a;
                 a = b;

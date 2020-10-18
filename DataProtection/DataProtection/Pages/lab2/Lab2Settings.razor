@@ -7,8 +7,13 @@
 
 <h3>Lab 2</h3>
 <InputFile OnChange="HandleFileSelected"></InputFile>
+@if (Document?.Data != null)
+{
+    <label>Размер: @(Document.Data.Length / 2048.00) мб</label>
+}
 @if (showProgressBar)
 {
+    <br />
     <div class="row mb-2">
         <h3 class="mat-subtitle1">Progress</h3>
         <MatProgressBar Progress="@progressValue"></MatProgressBar>
