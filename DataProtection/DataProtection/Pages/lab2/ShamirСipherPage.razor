@@ -45,7 +45,7 @@
 @code {
     [Parameter] public DocumentModel Document { get; set; }
     public DocumentModel EncodeShamirDocument { get; set; }
-    public int[] EncodeDataInt;
+    public char[] EncodeDataString;
 
     public DocumentModel DecodeShamirDocument { get; set; }
     public ShamirModel Shamir { get; set; } = new ShamirModel();
@@ -148,21 +148,21 @@
 
         MyModPow modPow = new MyModPow();
 
-        EncodeDataInt = new int[Document.Data.Length];
+        EncodeDataString = new char[Document.Data.Length];
         int i = 0;
         foreach (var message in Document.Data)
         {
             Shamir.x1 = modPow.Pow(message, Shamir.Ca, Shamir.p);
             Shamir.x2 = modPow.Pow(Shamir.x1, Shamir.Cb, Shamir.p);
             Shamir.x3 = modPow.Pow(Shamir.x2, Shamir.Da, Shamir.p);
-            EncodeDataInt[i] = (int)Shamir.x3;
+            EncodeDataString[i] = Convert.ToChar(Shamir.x3);
             i++;
         }
 
         EncodeShamirDocument.Data = new byte[Document.Data.Length * 4];
         for (i = 0; i < Document.Data.Length; i++)
         {
-            byte[] tmp = BitConverter.GetBytes(EncodeDataInt[i]);
+            byte[] tmp = BitConverter.GetBytes(EncodeDataString[i]);
             for (int j = 0; j < 4; j++)
             {
                 EncodeShamirDocument.Data[i * 4 + j] = tmp[j];
@@ -182,7 +182,7 @@
 
         MyModPow modPow = new MyModPow();
         int i = 0;
-        foreach (var message in EncodeDataInt)
+        foreach (var message in EncodeDataString)
         {
             Shamir.x4 = modPow.Pow(message, Shamir.Db, Shamir.p);
             DecodeShamirDocument.Data[i] = (byte)Shamir.x4;
