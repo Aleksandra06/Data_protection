@@ -3,21 +3,26 @@
 @using DataProtection.Engine.Managers
 @using System.Numerics
 
+@inject IJSRuntime JS
 <h3>Шифр Шамира</h3>
 
-@if (mCheckPrintA) {
+@if (mCheckPrintA)
+{
     <div class="row pb-4">
         <button class="btn btn-nav" @onclick="@Encrypt">Зашифровать</button>
         @if (EncodeShamirDocument?.Data != null)
         {
             <label>Размер: @(EncodeShamirDocument.Data.Length / 2048.00) мб</label>
+            @*<button class="col-4 btn btn-nav" @onclick="@(() => DownloadFile(EncodeShamirDocument))">Скачать</button>*@
         }
     </div>
 
     <div class="row pb-4">
-        <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
-        @if (DecodeShamirDocument?.Data != null) {
-            <label>Размер: @(DecodeShamirDocument.Data.Length / 2048.00) мб</label>
+        <button class="col-4 btn btn-nav" @onclick="@Decode" style="width: 100px">Дешифровать</button>
+        @if (DecodeShamirDocument?.Data != null)
+        {
+            <label col-4>Размер: @(DecodeShamirDocument.Data.Length / 2048.00) мб</label>
+            <button class="col-4 btn btn-nav" @onclick="@(() => DownloadFile(DecodeShamirDocument))" style="width: 100px">Скачать</button>
         }
     </div>
 }
@@ -61,21 +66,28 @@
         Shamir.p = tmp;
 
         // Generate Ca and Da
-        do {
-            do {
+        do
+        {
+            do
+            {
                 tmp = random.Next(1 << 1, 1 << 9);
             } while (!prime.isPrime(tmp, 1 << 10));
             Shamir.Ca = tmp;
         } while (evklid.gcd(Shamir.p - 1, Shamir.Ca) != 1);
 
         evklid.gcd(Shamir.p - 1, Shamir.Ca);
-        if (Shamir.p - 1 > Shamir.Ca) {
-            if (evklid.mY < 0) {
+        if (Shamir.p - 1 > Shamir.Ca)
+        {
+            if (evklid.mY < 0)
+            {
                 evklid.mY += Shamir.p - 1;
             }
             Shamir.Da = evklid.mY;
-        } else {
-            if (evklid.mX < 0) {
+        }
+        else
+        {
+            if (evklid.mX < 0)
+            {
                 evklid.mX += Shamir.p - 1;
             }
             Shamir.Da = evklid.mX;
@@ -84,21 +96,28 @@
         mCheckPrintA = (Shamir.Ca * Shamir.Da) % (Shamir.p - 1) == 1;
 
         // Generate Cb and Db
-        do {
-            do {
+        do
+        {
+            do
+            {
                 tmp = random.Next(1 << 1, 1 << 9);
             } while (!prime.isPrime(tmp, 1 << 10));
             Shamir.Cb = tmp;
         } while (evklid.gcd(Shamir.p - 1, Shamir.Cb) != 1);
 
         evklid.gcd(Shamir.p - 1, Shamir.Cb);
-        if (Shamir.p - 1 > Shamir.Cb) {
-            if (evklid.mY < 0) {
+        if (Shamir.p - 1 > Shamir.Cb)
+        {
+            if (evklid.mY < 0)
+            {
                 evklid.mY += Shamir.p - 1;
             }
             Shamir.Db = evklid.mY;
-        } else {
-            if (evklid.mX < 0) {
+        }
+        else
+        {
+            if (evklid.mX < 0)
+            {
                 evklid.mX += Shamir.p - 1;
             }
             Shamir.Db = evklid.mX;
@@ -123,7 +142,7 @@
         // Получается простое число p нам будет достаточно в размере 257 b чуть больше
         // Потому что m < p
         // Шифранули байты и получились числа больше байта, и мы их пихнули в обычный int
-        // Теперь нам надо "передать сообщение" 
+        // Теперь нам надо "передать сообщение"
 
         EncodeShamirDocument = new DocumentModel();
 
@@ -131,7 +150,8 @@
 
         EncodeDataInt = new int[Document.Data.Length];
         int i = 0;
-        foreach (var message in Document.Data) {
+        foreach (var message in Document.Data)
+        {
             Shamir.x1 = modPow.Pow(message, Shamir.Ca, Shamir.p);
             Shamir.x2 = modPow.Pow(Shamir.x1, Shamir.Cb, Shamir.p);
             Shamir.x3 = modPow.Pow(Shamir.x2, Shamir.Da, Shamir.p);
@@ -140,9 +160,11 @@
         }
 
         EncodeShamirDocument.Data = new byte[Document.Data.Length * 4];
-        for (i = 0; i < Document.Data.Length; i++) {
+        for (i = 0; i < Document.Data.Length; i++)
+        {
             byte[] tmp = BitConverter.GetBytes(EncodeDataInt[i]);
-            for (int j = 0; j < 4; j++) {
+            for (int j = 0; j < 4; j++)
+            {
                 EncodeShamirDocument.Data[i * 4 + j] = tmp[j];
             }
         }
@@ -155,15 +177,27 @@
         // Причем EncodeDataInt это и есть x3
         DecodeShamirDocument = new DocumentModel();
         DecodeShamirDocument.FileName = "Decode" + Document.FileName;
-        DecodeShamirDocument.FileName = Document.ContentType;
+        DecodeShamirDocument.ContentType = Document.ContentType;
         DecodeShamirDocument.Data = new byte[Document.Data.Length];
 
         MyModPow modPow = new MyModPow();
         int i = 0;
-        foreach (var message in EncodeDataInt) {
+        foreach (var message in EncodeDataInt)
+        {
             Shamir.x4 = modPow.Pow(message, Shamir.Db, Shamir.p);
             DecodeShamirDocument.Data[i] = (byte)Shamir.x4;
             i++;
+        }
+    }
+
+    private async void DownloadFile(DocumentModel doc)
+    {
+        if (doc != null)
+        {
+            await JS.InvokeAsync<object>(
+                "FileSaveAs",
+                doc.FileName,
+                doc.Data);
         }
     }
 }
