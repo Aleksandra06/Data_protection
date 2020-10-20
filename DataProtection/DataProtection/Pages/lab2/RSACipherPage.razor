@@ -75,17 +75,36 @@
         while (true)
         {
             d = Rand.Next(1, (int)F);
-            evklid.gcd(d, F);
-            if (evklid.mX == 1)
+            var gcd = evklid.gcd(F, d); // max, min
+            if (gcd == 1)
             {
                 break;
             }
         }
-        if (evklid.mY < 0)
-        {
-            evklid.mY += F;
+        if (F > d) {
+            if (evklid.mY < 0) {
+                evklid.mY += F;
+            }
+            c = evklid.mY;
+        } else {
+            if (evklid.mX < 0) {
+                evklid.mX += F;
+            }
+            c = evklid.mX;
         }
-        c = evklid.mY;
+
+        //evklid.gcd(Shamir.p - 1, Shamir.Ca);
+        //if (Shamir.p - 1 > Shamir.Ca) {
+        //    if (evklid.mY < 0) {
+        //        evklid.mY += Shamir.p - 1;
+        //    }
+        //    Shamir.Da = evklid.mY;
+        //} else {
+        //    if (evklid.mX < 0) {
+        //        evklid.mX += Shamir.p - 1;
+        //    }
+        //    Shamir.Da = evklid.mX;
+        //}
 
         String str = $@"c={c}
 N={N}
@@ -124,7 +143,7 @@ d={d}
         }
 
         EncodeRSADocument = new DocumentModel();
-        EncodeRSADocument.FileName = "Encode" + Document.FileName + "1";
+        EncodeRSADocument.FileName = "Encode_RSA_" + Document.FileName;
         EncodeRSADocument.Data = new byte[list1.Count];
 
         for (var index = 0; index < list1.Count; index++)
@@ -138,7 +157,7 @@ d={d}
     {
         MyModPow modPow = new MyModPow();
         DecodeRSADocument = new DocumentModel();
-        DecodeRSADocument.FileName = "Decod" + Document.FileName;
+        DecodeRSADocument.FileName = "Decod_RSA_" + Document.FileName;
         DecodeRSADocument.ContentType = Document.ContentType;
         DecodeRSADocument.Data = new byte[Document.Data.Length];
         var index = 0;
