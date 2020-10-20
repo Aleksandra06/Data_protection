@@ -1,16 +1,27 @@
 ﻿@using DataProtection.PageModels.lab2
 @using DataProtection.Engine.Managers
+@using DataProtection.PageModels
+@inject IJSRuntime JS
 
 <h3>Шифр Эль-Гамаля</h3>
 
 
-<div class="row pb-4">
-    <button class="btn btn-nav" @onclick="@Encrypt">Зашифровать</button>
-</div>
+@if (goodPrint && Document?.Data != null) {
+    <div class="row pb-4">
+        <button class="btn btn-nav" @onclick="@Encrypt">Зашифровать</button>
+        @*@if (EncodeShamirDocument?.Data != null) {
+            <label>Размер: @(EncodeShamirDocument.Data.Length / 2048.00) мб</label>
+        }*@
+    </div>
 
-<div class="row pb-4">
-    <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
-</div>
+    <div class="row pb-4">
+        <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
+        @if (DecodeElGamalDocument?.Data != null) {
+            <label>Размер: @(DecodeElGamalDocument.Data.Length / 2048.00) мб</label>
+            <button class="btn btn-nav" @onclick="@(() => DownloadFile(DecodeElGamalDocument))" style="width: 100px">Скачать</button>
+        }
+    </div>
+}
 
 
 <div>
@@ -28,19 +39,44 @@
 
 @code {
 
+    [Parameter] public DocumentModel Document { get; set; }
     ElGamalModel ElGamal = new ElGamalModel();
+    DocumentModel DecodeElGamalDocument { get; set; }
 
     IsPrime prime = new IsPrime();
+    bool goodPrint = false;
+
 
     public void Encrypt()
     {
         Random random = new Random();
+        MyModPow myMod = new MyModPow();
+        ElGamal.message = new Message[Document.Data.Length];
+        long k;
+        int i = 0;
+        foreach (var message in Document.Data) {
+            k = random.Next(1, (int)ElGamal.p - 1);
+            ElGamal.message[i].r = myMod.Pow(ElGamal.g, k, ElGamal.p);
+            ElGamal.message[i].e = myMod.Pow(message * myMod.Pow(ElGamal.Da, k, ElGamal.p), 1, ElGamal.p);
+            i++;
+        }
 
     }
 
     public void Decode()
     {
+        MyModPow myMod = new MyModPow();
 
+        DecodeElGamalDocument = new DocumentModel();
+        DecodeElGamalDocument.FileName = "El_gamal_decode_" + Document.FileName;
+        DecodeElGamalDocument.ContentType = Document.ContentType;
+        DecodeElGamalDocument.Data = new byte[Document.Data.Length];
+
+        int i = 0;
+        foreach (var encodeMessage in ElGamal.message) {
+            DecodeElGamalDocument.Data[i] = (byte)myMod.Pow(ElGamal.message[i].e * myMod.Pow(ElGamal.message[i].r, ElGamal.p - 1 - ElGamal.Ca, ElGamal.p), 1, ElGamal.p);
+            i++;
+        }
     }
 
     public void generate()
@@ -70,5 +106,17 @@
         ElGamal.Ca = random.Next(2, (int)ElGamal.p);
 
         ElGamal.Da = modPow.Pow(ElGamal.g, ElGamal.Ca, ElGamal.p);
+
+        goodPrint = true;
+    }
+
+    private async void DownloadFile(DocumentModel doc)
+    {
+        if (doc != null) {
+            await JS.InvokeAsync<object>(
+                "saveAsFile",
+                doc.FileName,
+                doc.Data);
+        }
     }
 }

@@ -15,6 +15,8 @@ namespace DataProtection.PageModels.lab2
         public long p { get; set; }
         public long q { get; set; }
         public long g { get; set; }
+        public long r { get; set; }
+        public long e { get; set; }
         public long Da { get; set; }
         public long Ca { get; set; }
         public Message[] message { get; set; }
