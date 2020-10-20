@@ -1,6 +1,8 @@
 ﻿@using DataProtection.PageModels.lab2
 @using DataProtection.Engine.Managers
 @using DataProtection.PageModels
+@using System.IO
+@using System.Text
 @inject IJSRuntime JS
 
 <h3>Шифр Эль-Гамаля</h3>
@@ -33,6 +35,10 @@
 
 <div>
     <button class="btn btn-nav" @onclick="@generate">Генерация</button>
+    @if (ElGamalKey?.Data != null)
+    {
+        <button class="btn btn-nav" @onclick="@(() => DownloadFile(ElGamalKey))" style="width: 100px">Скачать</button>
+    }
 </div>
 
 <div>
@@ -48,6 +54,7 @@
 
     [Parameter] public DocumentModel Document { get; set; }
     ElGamalModel ElGamal = new ElGamalModel();
+    DocumentModel ElGamalKey { get; set; }
     DocumentModel EncodeElGamalDocument1 { get; set; }
     DocumentModel EncodeElGamalDocument2 { get; set; }
     DocumentModel DecodeElGamalDocument { get; set; }
@@ -162,6 +169,17 @@
         ElGamal.Ca = random.Next(2, (int)ElGamal.p);
 
         ElGamal.Da = modPow.Pow(ElGamal.g, ElGamal.Ca, ElGamal.p);
+
+        String str = $@"p={ElGamal.p}
+q={ElGamal.q}
+g={ElGamal.g}
+Ca={ElGamal.Ca}
+Da={ElGamal.Da}
+";
+
+        ElGamalKey = new DocumentModel();
+        ElGamalKey.FileName = "ElGamalKey.txt";
+        ElGamalKey.Data = Encoding.ASCII.GetBytes(str);
 
         goodPrint = true;
     }

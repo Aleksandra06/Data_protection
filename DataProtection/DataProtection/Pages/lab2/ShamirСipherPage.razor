@@ -2,6 +2,7 @@
 @using DataProtection.PageModels.lab2
 @using DataProtection.Engine.Managers
 @using System.Numerics
+@using System.Text
 
 @inject IJSRuntime JS
 <h3>Шифр Шамира</h3>
@@ -28,6 +29,10 @@
 }
 <div>
     <button class="btn btn-nav" @onclick="@generate">Генерация</button>
+    @if (ShamirKey?.Data != null)
+    {
+        <button class="btn btn-nav" @onclick="@(() => DownloadFile(ShamirKey))" style="width: 100px">Скачать</button>
+    }
 </div>
 
 <div>
@@ -49,6 +54,7 @@
 
     public DocumentModel DecodeShamirDocument { get; set; }
     public ShamirModel Shamir { get; set; } = new ShamirModel();
+    DocumentModel ShamirKey { get; set; }
     bool mCheckPrintA = false;
     bool mCheckPrintB = false;
 
@@ -124,6 +130,18 @@
         }
 
         mCheckPrintB = (Shamir.Cb * Shamir.Db) % (Shamir.p - 1) == 1;
+
+
+        String str = $@"p={Shamir.p}
+Ca={Shamir.Ca}
+Da={Shamir.Da}
+Cb={Shamir.Cb}
+Db={Shamir.Db}
+";
+
+        ShamirKey = new DocumentModel();
+        ShamirKey.FileName = "ShamirKey.txt";
+        ShamirKey.Data = Encoding.ASCII.GetBytes(str);
     }
 
     public void Encrypt()
