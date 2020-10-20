@@ -1,5 +1,75 @@
-﻿<h3>RSACipherPage</h3>
+﻿@using DataProtection.PageModels
+@using DataProtection.PageModels.lab2
+@using DataProtection.Engine.Managers
+@inject IJSRuntime JS
+
+<h3>Шифр RSA</h3>
+
+@if (goodPrint && Document?.Data != null)
+{
+    <div class="pb-4">
+        <button class="row btn btn-nav" @onclick="@Encrypt">Зашифровать</button><br />
+        @if (EncodeRSADocument?.Data != null)
+        {
+            <label class="row">Размер: @(EncodeRSADocument.Data.Length / 2048.00) мб</label><br />
+        }
+    </div>
+
+    <div class="pb-4">
+        <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
+        @if (DecodeRSADocument?.Data != null)
+        {
+            <label>Размер: @(DecodeRSADocument.Data.Length / 2048.00) мб</label>
+            <button class="btn btn-nav" @onclick="@(() => DownloadFile(DecodeRSADocument))" style="width: 100px">Скачать</button>
+        }
+    </div>
+}
+
+
+<div>
+    <button class="btn btn-nav" @onclick="@generate">Генерация</button>
+</div>
+
+@*<div>
+    <div>p = @ElGamal.p</div>
+    <div>q = @ElGamal.q</div>
+    <div>g = @ElGamal.g</div>
+    <div>Ca = @ElGamal.Ca</div>
+    <div>Da = @ElGamal.Da</div>
+
+</div>*@
 
 @code {
+    [Parameter] public DocumentModel Document { get; set; }
+    //ElGamalModel RSA = new ElGamalModel();
+    DocumentModel EncodeRSADocument { get; set; }
+    DocumentModel DecodeRSADocument { get; set; }
+    bool goodPrint = false;
 
+    public void generate()
+    {
+
+        goodPrint = true;
+    }
+
+    public void Encrypt()
+    {
+
+    }
+
+    public void Decode()
+    {
+
+    }
+
+    private async void DownloadFile(DocumentModel doc)
+    {
+        if (doc != null)
+        {
+            await JS.InvokeAsync<object>(
+                "saveAsFile",
+                doc.FileName,
+                doc.Data);
+        }
+    }
 }
