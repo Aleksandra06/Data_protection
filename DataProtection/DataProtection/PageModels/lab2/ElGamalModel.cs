@@ -7,8 +7,8 @@ namespace DataProtection.PageModels.lab2
 {
     public struct Message
     {
-        public long r { get; set; }
-        public long e { get; set; }
+        public int r { get; set; }
+        public int e { get; set; }
     };
     public class ElGamalModel
     {
