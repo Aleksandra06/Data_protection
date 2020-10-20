@@ -1,6 +1,7 @@
 ﻿@using DataProtection.PageModels
 @using DataProtection.PageModels.lab2
 @using DataProtection.Engine.Managers
+@using System.Text
 @inject IJSRuntime JS
 
 <h3>Шифр RSA</h3>
@@ -28,38 +29,125 @@
 
 <div>
     <button class="btn btn-nav" @onclick="@generate">Генерация</button>
+    @if (RSAKey?.Data != null)
+    {
+        <button class="btn btn-nav" @onclick="@(() => DownloadFile(RSAKey))" style="width: 100px">Скачать</button>
+    }
 </div>
 
 @*<div>
-    <div>p = @ElGamal.p</div>
-    <div>q = @ElGamal.q</div>
-    <div>g = @ElGamal.g</div>
-    <div>Ca = @ElGamal.Ca</div>
-    <div>Da = @ElGamal.Da</div>
+        <div>p = @ElGamal.p</div>
+        <div>q = @ElGamal.q</div>
+        <div>g = @ElGamal.g</div>
+        <div>Ca = @ElGamal.Ca</div>
+        <div>Da = @ElGamal.Da</div>
 
-</div>*@
+    </div>*@
 
 @code {
     [Parameter] public DocumentModel Document { get; set; }
+    DocumentModel RSAKey { get; set; }
     //ElGamalModel RSA = new ElGamalModel();
     DocumentModel EncodeRSADocument { get; set; }
     DocumentModel DecodeRSADocument { get; set; }
     bool goodPrint = false;
+    long d, N, c;
+
+    List<int> myEncode;
 
     public void generate()
     {
+        Evklid evklid = new Evklid();
+        Random Rand = new Random();
+        long P, Q, F, eman = 0;
+        byte name = 1;
+        do
+        {
+            Q = Rand.Next(1, (int)Math.Pow(10, 4));
+        } while (IsPrime.isPrime(Q, 1 << 10) == false);
 
+        do
+        {
+            P = Rand.Next(1, (int)Math.Pow(10, 4));
+        } while (IsPrime.isPrime(P, 1 << 10) == false);
+        N = P * Q;
+        F = (P - 1) * (Q - 1);
+        while (true)
+        {
+            d = Rand.Next(1, (int)F);
+            evklid.gcd(d, F);
+            if (evklid.mX == 1)
+            {
+                break;
+            }
+        }
+        if (evklid.mY < 0)
+        {
+            evklid.mY += F;
+        }
+        c = evklid.mY;
+
+        String str = $@"c={c}
+N={N}
+d={d}
+";
+
+        RSAKey = new DocumentModel();
+        RSAKey.FileName = "RSAKey.txt";
+        RSAKey.Data = Encoding.ASCII.GetBytes(str);
         goodPrint = true;
     }
 
     public void Encrypt()
     {
+        MyModPow myModPow = new MyModPow();
+        myEncode = new List<int>();
+        for (int i = 0; i < Document.Data.Length; i++)
+        {
+            var name = Document.Data[i];
+            var e = Convert.ToInt32(myModPow.Pow(name, d, N));
+            myEncode.Add(e);
+        }
 
+        List<byte> list1 = new List<byte>();
+        for (var index = 0; index < myEncode.Count; index++)
+        {
+            var message = myEncode[index];
+            var one = BitConverter.GetBytes(message);
+            for (int i = 0; i < one.Length; i++)
+            {
+                if (one[i] != 0)
+                {
+                    list1.Add(one[i]);
+                }
+            }
+        }
+
+        EncodeRSADocument = new DocumentModel();
+        EncodeRSADocument.FileName = "Encode" + Document.FileName + "1";
+        EncodeRSADocument.Data = new byte[list1.Count];
+
+        for (var index = 0; index < list1.Count; index++)
+        {
+            var list = list1[index];
+            EncodeRSADocument.Data[index] = list;
+        }
     }
 
     public void Decode()
     {
-
+        MyModPow modPow = new MyModPow();
+        DecodeRSADocument = new DocumentModel();
+        DecodeRSADocument.FileName = "Decod" + Document.FileName;
+        DecodeRSADocument.ContentType = Document.ContentType;
+        DecodeRSADocument.Data = new byte[Document.Data.Length];
+        var index = 0;
+        foreach (var names in myEncode)
+        {
+            var eman = modPow.Pow(Convert.ToInt64(names), c, N);
+            DecodeRSADocument.Data[index] = (byte) eman;
+            index++;
+        }
     }
 
     private async void DownloadFile(DocumentModel doc)

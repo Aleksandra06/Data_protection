@@ -61,14 +61,13 @@
     public void generate()
     {
         Random random = new Random();
-        IsPrime prime = new IsPrime();
         Evklid evklid = new Evklid();
         long tmp;
 
         do
         {
             tmp = random.Next((1 << 8) + 1, 1 << 9);
-        } while (!prime.isPrime(tmp, 1 << 10));
+        } while (!IsPrime.isPrime(tmp, 1 << 10));
         Shamir.p = tmp;
 
         // Generate Ca and Da
@@ -77,7 +76,7 @@
             do
             {
                 tmp = random.Next(1 << 1, 1 << 9);
-            } while (!prime.isPrime(tmp, 1 << 10));
+            } while (!IsPrime.isPrime(tmp, 1 << 10));
             Shamir.Ca = tmp;
         } while (evklid.gcd(Shamir.p - 1, Shamir.Ca) != 1);
 
@@ -107,7 +106,7 @@
             do
             {
                 tmp = random.Next(1 << 1, 1 << 9);
-            } while (!prime.isPrime(tmp, 1 << 10));
+            } while (!IsPrime.isPrime(tmp, 1 << 10));
             Shamir.Cb = tmp;
         } while (evklid.gcd(Shamir.p - 1, Shamir.Cb) != 1);
 

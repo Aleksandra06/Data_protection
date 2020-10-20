@@ -5,9 +5,9 @@ using DataProtection.Engine.Managers;
 
 namespace DataProtection.Engine.Managers
 {
-    public class IsPrime
+    public static class IsPrime
     {
-        public bool isPrime(long prime, int k)
+        public static bool isPrime(long prime, int k)
         {
             Random rand = new Random();
             Evklid myAlg = new Evklid();
