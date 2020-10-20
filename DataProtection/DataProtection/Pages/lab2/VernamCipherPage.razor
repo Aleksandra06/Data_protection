@@ -3,37 +3,47 @@
 @using DataProtection.Engine.Managers
 @using System
 @using System.Collections
+@using System.Text
 
 @inject IJSRuntime JS
 
 <h3>Шифр Вермана</h3>
 
-@if (goodPrint && Document?.Data != null) {
+@if (goodPrint && Document?.Data != null)
+{
     <div class="row pb-4">
         <button class="btn btn-nav" @onclick="@Encrypt">Зашифровать</button>
-        @*@if (EncodeShamirDocument?.Data != null) {
-                <label>Размер: @(EncodeShamirDocument.Data.Length / 2048.00) мб</label>
-                <button class="btn btn-nav" @onclick="@(() => DownloadFile(EncodeShamirDocument))">Скачать</button>
-            }*@
-        @if (goodEncode) {
-            <span>
-                good
-            </span>
+        @if (EncodeVermanDocument?.Data != null)
+        {
+            <label>Размер: @(EncodeVermanDocument.Data.Length / 2048.00) мб</label>
+            @*<button class="btn btn-nav" @onclick="@(() => DownloadFile(EncodeShamirDocument))">Скачать</button>*@
         }
+        @*@if (goodEncode)
+            {
+                <span>
+                    good
+                </span>
+            }*@
     </div>
 
     <div class="row pb-4">
         <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
-        @if (DecodeVermanDocument?.Data != null) {
+        @if (DecodeVermanDocument?.Data != null)
+        {
             <label>Размер: @(DecodeVermanDocument.Data.Length / 2048.00) мб</label>
             <button class="btn btn-nav" @onclick="@(() => DownloadFile(DecodeVermanDocument))" style="width: 100px">Скачать</button>
         }
     </div>
 }
 
-@if (Document?.Data != null) {
+@if (Document?.Data != null)
+{
     <div>
         <button class="btn btn-nav" @onclick="@generate">Генерация</button>
+        @if (VermanKey?.Data != null)
+        {
+            <button class="btn btn-nav" @onclick="@(() => DownloadFile(VermanKey))" style="width: 100px">Скачать</button>
+        }
     </div>
 }
 
@@ -41,24 +51,35 @@
 @code {
 
     [Parameter] public DocumentModel Document { get; set; }
+    public DocumentModel EncodeVermanDocument { get; set; }
     public DocumentModel DecodeVermanDocument { get; set; }
     public VermanModel Verman = new VermanModel();
     bool goodPrint = false, goodEncode = false;
+    DocumentModel VermanKey { get; set; }
 
     public void generate()
     {
         Random random = new Random();
         Verman.Message = new VermanMessage[Document.Data.Length];
-        for (int i = 0; i < Verman.Message.Length; i++) {
+        var str = "";
+        for (int i = 0; i < Verman.Message.Length; i++)
+        {
             Verman.Message[i].k = (byte)random.Next(1, 1 << 8);
+            str = $"k={Verman.Message[i].k}\n";
         }
+
+        VermanKey = new DocumentModel();
+        VermanKey.FileName = "VermanKey.txt";
+        VermanKey.Data = Encoding.ASCII.GetBytes(str);
+
         goodPrint = true;
     }
 
     public void Encrypt()
     {
         byte[] Byte = new byte[1];
-        for (int i = 0; i < Document.Data.Length; i++) {
+        for (int i = 0; i < Document.Data.Length; i++)
+        {
 
             Byte[0] = Verman.Message[i].k;
             BitArray k = new BitArray(Byte);
@@ -68,6 +89,17 @@
 
             Verman.Message[i].e = (byte)getIntFromBitArray(m.Xor(k));
         }
+
+        EncodeVermanDocument = new DocumentModel();
+        EncodeVermanDocument.Data = new byte[Verman.Message.Length];
+
+        int index = 0;
+        foreach (var message in Verman.Message)
+        {
+            EncodeVermanDocument.Data[index] = message.e;
+            index++;
+        }
+
         goodEncode = true;
     }
 
@@ -78,7 +110,8 @@
         DecodeVermanDocument.ContentType = Document.ContentType;
         DecodeVermanDocument.Data = new byte[Document.Data.Length];
         byte[] Byte = new byte[1];
-        for (int i = 0; i < Verman.Message.Length; i++) {
+        for (int i = 0; i < Verman.Message.Length; i++)
+        {
             Byte[0] = Verman.Message[i].k;
             BitArray k = new BitArray(Byte);
             Byte[0] = Verman.Message[i].m;
@@ -104,7 +137,8 @@
 
     private async void DownloadFile(DocumentModel doc)
     {
-        if (doc != null) {
+        if (doc != null)
+        {
             await JS.InvokeAsync<object>(
                 "saveAsFile",
                 doc.FileName,
