@@ -13,16 +13,16 @@
         @if (EncodeShamirDocument?.Data != null)
         {
             <label>Размер: @(EncodeShamirDocument.Data.Length / 2048.00) мб</label>
-            @*<button class="col-4 btn btn-nav" @onclick="@(() => DownloadFile(EncodeShamirDocument))">Скачать</button>*@
+            <button class="btn btn-nav" @onclick="@(() => DownloadFile(EncodeShamirDocument))">Скачать</button>
         }
     </div>
 
     <div class="row pb-4">
-        <button class="col-4 btn btn-nav" @onclick="@Decode" style="width: 100px">Дешифровать</button>
+        <button class="btn btn-nav" @onclick="@Decode">Дешифровать</button>
         @if (DecodeShamirDocument?.Data != null)
         {
-            <label col-4>Размер: @(DecodeShamirDocument.Data.Length / 2048.00) мб</label>
-            <button class="col-4 btn btn-nav" @onclick="@(() => DownloadFile(DecodeShamirDocument))" style="width: 100px">Скачать</button>
+            <label>Размер: @(DecodeShamirDocument.Data.Length / 2048.00) мб</label>
+            <button class="btn btn-nav" @onclick="@(() => DownloadFile(DecodeShamirDocument))" style="width: 100px">Скачать</button>
         }
     </div>
 }
@@ -155,7 +155,7 @@
             Shamir.x1 = modPow.Pow(message, Shamir.Ca, Shamir.p);
             Shamir.x2 = modPow.Pow(Shamir.x1, Shamir.Cb, Shamir.p);
             Shamir.x3 = modPow.Pow(Shamir.x2, Shamir.Da, Shamir.p);
-            EncodeDataInt[i] = (int)Shamir.x3;
+            EncodeDataInt[i] = Convert.ToInt32(Shamir.x3);
             i++;
         }
 
@@ -195,7 +195,7 @@
         if (doc != null)
         {
             await JS.InvokeAsync<object>(
-                "FileSaveAs",
+                "saveAsFile",
                 doc.FileName,
                 doc.Data);
         }
