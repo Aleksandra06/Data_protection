@@ -1,0 +1,115 @@
+﻿@page "/lab3"
+@inject IJSRuntime JS
+@using BlazorInputFile
+@using System.IO
+@using System.Security.Cryptography
+@using DataProtection.PageModels
+
+<h3>Lab 3</h3>
+<InputFile OnChange="HandleFileSelected"></InputFile>
+@if (Document?.Data != null)
+{
+    <label>Размер: @(Document.Data.Length / 2048.00) мб</label>
+}
+@if (showProgressBar)
+{
+    <br />
+    <div class="row mb-2">
+        <h3 class="mat-subtitle1">Progress</h3>
+        <MatProgressBar Progress="@progressValue"></MatProgressBar>
+    </div>
+}
+@if (FileErrorsList?.Count > 0)
+{
+    <div class="row mb-2">
+        @foreach (var i in FileErrorsList)
+        {
+            <span class="row">@i</span>
+        }
+    </div>
+}
+
+<MatTabGroup Style="background-color:white">
+    @*<MatTab Label="Шифр Шамира">
+        <ShamirСipherPage Document="@Document" />
+    </MatTab>
+    <MatTab Label="Шифр Эль-Гамаля">
+        <ElGamalCipherPage Document="@Document" />
+    </MatTab>
+    <MatTab Label="Шифр Вернама">
+        <VernamCipherPage Document="@Document" />
+    </MatTab>
+    <MatTab Label="Шифр RSA">
+        <RSACipherPage Document="@Document" />
+    </MatTab>*@
+</MatTabGroup>
+
+@code {
+    protected List<string> FileErrorsList { get; set; }
+    protected bool showProgressBar { get; set; } = false;
+    protected double progressValue { get; set; }
+    protected DocumentModel Document { get; set; }
+
+    protected async void HandleFileSelected(IFileListEntry[] files)
+    {
+        FileErrorsList = new List<string>();
+        progressValue = 0.0;
+        showProgressBar = true;
+
+        if (files != null && files.Count() > 0)
+        {
+            double step = (double)1 / files.Count();
+            foreach (var file in files)
+            {
+                try
+                {
+                    //if (file.Size > (2 * 1024 * 1024))  //2MB
+                    //{
+                    //    FileErrorsList.Add($"File: {file.Name} don't uploaded, because size of file is more than 2MB");
+                    //}
+                    //else
+                    //{
+                    var doc = await UploadFile(file);
+                    if (doc != null)
+                    {
+                        Document = doc;
+                    }
+                    //}
+                }
+                catch (Exception e)
+                {
+                    FileErrorsList.Add($"File: {file.Name} don't uploaded, because {e.Message}");
+                }
+                finally
+                {
+                    progressValue += step;
+                    StateHasChanged();
+                }
+            }
+        }
+        progressValue = 1.0;
+        showProgressBar = false;
+        StateHasChanged();
+    }
+    public async Task<DocumentModel> UploadFile(IFileListEntry file)
+    {
+        if (file != null)
+        {
+            byte[] result;
+            MemoryStream SourceStream = await file.ReadAllAsync((int)file.Size);
+            result = new byte[file.Data.Length];
+            await SourceStream.ReadAsync(result, 0, (int)file.Data.Length);
+
+            DocumentModel doc = new DocumentModel()
+            {
+                FileName = file.Name,
+                Data = result,
+                ContentType = file.Type
+            };
+
+            return doc;
+
+        }
+        return null;
+    }
+}
