@@ -3,6 +3,7 @@ using DataProtection.PageModels;
 using DataProtection.PageModels.Lab3;
 using Microsoft.AspNetCore.Components;
 using System;
+using System.Security.Cryptography
 
 namespace DataProtection.Pages.Lab3
 {
@@ -27,6 +28,8 @@ namespace DataProtection.Pages.Lab3
             elGamal.x = random.Next(2, (int)elGamal.p_prev);
             elGamal.y = myMod.Pow(elGamal.g, elGamal.x, elGamal.p);
             // elGamal.h = ... // Хеш - функция для message
+            // SHA256 sha256 = SHA256.Create();
+            // elGamal.h = sha256.ComputeHash();
             elGamal.k = generateK();
             elGamal.k_revers = generateKREVERS();
             elGamal.r = myMod.Pow(elGamal.g, elGamal.k, elGamal.p);
