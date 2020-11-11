@@ -31,17 +31,17 @@
 
 <MatTabGroup Style="background-color:white">
     <MatTab Label="Подпись Эль-Гамаля">
-        <ElGamalSignaturePage Document="@Document"/>
+        <ElGamalSignaturePage Document="@Document" />
     </MatTab>
-    @*<MatTab Label="Шифр Эль-Гамаля">
-        <ElGamalCipherPage Document="@Document" />
+    <MatTab Label="Подпись RSA">
+        <RSASignaturePage Document="@Document" />
     </MatTab>
-    <MatTab Label="Шифр Вернама">
-        <VernamCipherPage Document="@Document" />
-    </MatTab>
-    <MatTab Label="Шифр RSA">
-        <RSACipherPage Document="@Document" />
-    </MatTab>*@
+    @*<MatTab Label="Шифр Вернама">
+            <VernamCipherPage Document="@Document" />
+        </MatTab>
+        <MatTab Label="Шифр RSA">
+            <RSACipherPage Document="@Document" />
+        </MatTab>*@
 </MatTabGroup>
 
 @code {

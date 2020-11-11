@@ -1,0 +1,68 @@
+﻿@using DataProtection.PageModels.Lab3
+
+@if (Document?.Data != null) { }
+
+<style>
+    td, th {
+        text-align: center;
+    }
+</style>
+
+<h3 style="text-align: center">Подпись RSA</h3>
+
+<div>
+    <table class="table table-striped" style="margin: auto; width: 800px; ">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Переменная</th>
+                <th scope="col">Пояснение</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>p = @rsa.p</td>
+                <td>Простое большое число</td>
+            </tr>
+            <tr>
+                <td>q = @rsa.q</td>
+                <td>Взаимно простое с p</td>
+            </tr>
+            <tr>
+                <td>n = @rsa.n</td>
+                <td>Произведение p и q</td>
+            </tr>
+            <tr>
+                <td>phi = @rsa.phi</td>
+                <td>Количество  p, q</td>
+            </tr>
+            <tr>
+                <td>d = @rsa.d</td>
+                <td>Взаимно  простое с Фи</td>
+            </tr>
+            <tr>
+                <td>c = @rsa.c</td>
+                <td>d^-1 по модулю phi</td>
+            </tr>
+            <tr>
+                <td>y = h(m) = @rsa.y</td>
+                <td>Хеш-функцияо</td>
+            </tr>
+            <tr>
+                <td>s = @rsa.s</td>
+                <td>Вычисляется по c, y</td>
+            </tr>
+            <tr>
+                <td>w = @rsa.w</td>
+                <td>Вычисляется по s, d, n</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
+</div>
+
+@code {
+
+}

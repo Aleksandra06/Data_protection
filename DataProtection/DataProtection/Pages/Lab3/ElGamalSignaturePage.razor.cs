@@ -3,7 +3,7 @@ using DataProtection.PageModels;
 using DataProtection.PageModels.Lab3;
 using Microsoft.AspNetCore.Components;
 using System;
-using System.Security.Cryptography
+using System.Security.Cryptography;
 
 namespace DataProtection.Pages.Lab3
 {
@@ -33,7 +33,9 @@ namespace DataProtection.Pages.Lab3
             elGamal.k = generateK();
             elGamal.k_revers = generateKREVERS();
             elGamal.r = myMod.Pow(elGamal.g, elGamal.k, elGamal.p);
-
+            // elGamal. ...
+            // elGamal. ...
+            // elGamal. ...
         }
 
         public long generateK()
