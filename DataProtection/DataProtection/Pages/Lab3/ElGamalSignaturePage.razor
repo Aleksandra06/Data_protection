@@ -1,4 +1,71 @@
-﻿<h3>ElGamalSignaturePage</h3>
+﻿@using DataProtection.PageModels.Lab3
+
+@if (Document?.Data != null) {}
+
+<style>
+    td, th {
+        text-align: center;
+    }
+</style>
+
+<h3 style="text-align: center">Подпись Эль-Гамаля</h3>
+
+<div>
+    <table class="table table-striped" style="margin: auto; width: 800px; ">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Переменная</th>
+                <th scope="col">Пояснение</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>p = @elGamal.p</td>
+                <td>Простое большое число</td>
+            </tr>
+            <tr>
+                <td>g = @elGamal.g</td>
+                <td>По различным степенямe</td>
+            </tr>
+            <tr>
+                <td>x = @elGamal.x</td>
+                <td>Секретный ключ</td>
+            </tr>
+            <tr>
+                <td>y = @elGamal.y</td>
+                <td>Открытый ключ</td>
+            </tr>
+            <tr>
+                <td>k = @elGamal.k</td>
+                <td>Случайное число</td>
+            </tr>
+            <tr>
+                <td>k^-1 = @elGamal.k_revers</td>
+                <td>Случайное число</td>
+            </tr>
+            <tr>
+                <td>h(m) = @elGamal.h</td>
+                <td>Хеш-функцияо</td>
+            </tr>
+            <tr>
+                <td>r = @elGamal.r</td>
+                <td>Вычисляется по К</td>
+            </tr>
+            <tr>
+                <td>u = @elGamal.u</td>
+                <td>Вычисляется по h, x, r</td>
+            </tr>
+            <tr>
+                <td>s = @elGamal.s</td>
+                <td>Вычисляем по k^-1, u</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
+</div>
 
 @code {
 

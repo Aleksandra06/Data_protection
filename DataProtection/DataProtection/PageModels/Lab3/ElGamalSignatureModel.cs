@@ -15,6 +15,7 @@ namespace DataProtection.PageModels.Lab3
         public long g { get; set; }
         public long r { get; set; }
         public long k { get; set; }
+        public long k_revers { get; set; }
         public long u { get; set; }
         public long s { get; set; }
         public long p_prev { get; set; }
