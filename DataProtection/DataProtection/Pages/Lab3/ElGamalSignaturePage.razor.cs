@@ -28,8 +28,8 @@ namespace DataProtection.Pages.Lab3
             elGamal.y = myMod.Pow(elGamal.g, elGamal.x, elGamal.p);
             // elGamal.h = ... // Хеш - функция для message
             elGamal.k = generateK();
+            elGamal.k_revers = generateKREVERS();
             elGamal.r = myMod.Pow(elGamal.g, elGamal.k, elGamal.p);
-
 
         }
 
@@ -72,6 +72,16 @@ namespace DataProtection.Pages.Lab3
 
             } while (!IsPrime.isPrime(currentP, 1 << 10));
             return currentP;
+        }
+
+        public long generateKREVERS()
+        {
+            evklid.gcd(elGamal.k, elGamal.p_prev);
+
+            if (evklid.mY < 0) {
+                evklid.mY += elGamal.p_prev;
+            }
+            return evklid.mY;
         }
     }
 }
