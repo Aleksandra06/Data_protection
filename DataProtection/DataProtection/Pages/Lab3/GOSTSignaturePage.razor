@@ -1,0 +1,104 @@
+﻿@using DataProtection.PageModels.Lab3
+
+@if (Document?.Data != null) { }
+
+<style>
+    td, th {
+        text-align: center;
+    }
+</style>
+
+<h3 style="text-align: center">Подпись по ГОСТу</h3>
+
+<div>
+    <table class="table table-striped" style="margin: auto; width: 800px; ">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Переменная</th>
+                <th scope="col">Пояснение</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>p = @gost.p</td>
+                <td>Простое большое число 1024б</td>
+            </tr>
+            <tr>
+                <td>q = @gost.q</td>
+                <td>Простое, взаимно простое с p 256б</td>
+            </tr>
+            <tr>
+                <td>b = @gost.b</td>
+                <td>Целое число</td>
+            </tr>
+            <tr>
+                <td>а = @gost.a</td>
+                <td>По p, q</td>
+            </tr>
+            <tr>
+                <td>x = @gost.x</td>
+                <td>Секретный ключ</td>
+            </tr>
+            <tr>
+                <td>y = @gost.y</td>
+                <td>Открытый ключ</td>
+            </tr>
+            <tr>
+                <td>h(m) = @gost.h</td>
+                <td>Хеш-функция</td>
+            </tr>
+            <tr>
+                <td>k = @gost.k</td>
+                <td>Случайное число меньше q</td>
+            </tr>
+            <tr>
+                <td>r = @gost.r</td>
+                <td>Вычисляется по a, k, p, q</td>
+            </tr>
+            <tr>
+                <td>s = @gost.s</td>
+                <td>Вычисляется по k, h, x, r, q</td>
+            </tr>
+            <tr>
+                <td>Проверка</td>
+                <td>Подписи</td>
+            </tr>
+            <tr>
+                <td>h_check = @gost.h_check</td>
+                <td>Хеш-функция</td>
+            </tr>
+            <tr>
+                <td>r = @gost.r</td>
+                <td>Проверка r [0, q]</td>
+            </tr>
+            <tr>
+                <td>s = @gost.s</td>
+                <td>Проверка s [0, q]</td>
+            </tr>
+            <tr>
+                <td>u1 = @gost.u1</td>
+                <td>Вычисляется по s, h_revers, q</td>
+            </tr>
+            <tr>
+                <td>u2 = @gost.u2</td>
+                <td>Вычисляется по -r, h_revers, q</td>
+            </tr>
+            <tr>
+                <td>v = @gost.v</td>
+                <td>Вычисляется по a^u1, y^u2, q</td>
+            </tr>
+            <tr>
+                <td>@gost.v = @gost.r</td>
+                <td>Проверка v = r</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
+</div>
+
+@code {
+
+}
