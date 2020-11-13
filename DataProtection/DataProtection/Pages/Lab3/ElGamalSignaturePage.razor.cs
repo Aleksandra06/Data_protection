@@ -24,7 +24,9 @@ namespace DataProtection.Pages.Lab3
         {
             SHA256 sha256 = SHA256.Create();
             elGamal.h = new BigInteger(sha256.ComputeHash(Document.Data));
-
+            if (elGamal.h.SignValue < 0) {
+                elGamal.h = elGamal.h.Abs();
+            }
 
             BigInteger currentQ;
             BigInteger currentP;
