@@ -8,21 +8,21 @@ namespace DataProtection.PageModels.Lab3
 {
     public class GOSTSignatureModel
     {
-        public BigInteger p { get; set; }
-        public BigInteger q { get; set; }
+        public System.Numerics.BigInteger p { get; set; }
+        public System.Numerics.BigInteger q { get; set; }
         public int b { get; set; }
-        public BigInteger a { get; set; }
-        public BigInteger x { get; set; }
-        public BigInteger y { get; set; }
-        public BigInteger h { get; set; }
-        public BigInteger h_revers { get; set; }
-        public BigInteger k { get; set; }
-        public BigInteger r { get; set; }
-        public BigInteger s { get; set; }
-        public BigInteger h_check { get; set; }
-        public BigInteger u1 { get; set; }
-        public BigInteger u2 { get; set; }
-        public BigInteger v { get; set; }
+        public System.Numerics.BigInteger a { get; set; }
+        public System.Numerics.BigInteger x { get; set; }
+        public System.Numerics.BigInteger y { get; set; }
+        public System.Numerics.BigInteger h { get; set; }
+        public System.Numerics.BigInteger h_revers { get; set; }
+        public System.Numerics.BigInteger k { get; set; }
+        public System.Numerics.BigInteger r { get; set; }
+        public System.Numerics.BigInteger s { get; set; }
+        public System.Numerics.BigInteger h_check { get; set; }
+        public System.Numerics.BigInteger u1 { get; set; }
+        public System.Numerics.BigInteger u2 { get; set; }
+        public System.Numerics.BigInteger v { get; set; }
 
     }
 }

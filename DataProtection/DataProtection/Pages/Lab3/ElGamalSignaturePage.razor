@@ -1,17 +1,18 @@
 ﻿@using DataProtection.PageModels.Lab3
 
-@if (Document?.Data != null) {}
+@if (Document?.Data != null) { }
 
 <style>
     td, th {
         text-align: center;
+        width: 500px;
     }
 </style>
 
 <h3 style="text-align: center">Подпись Эль-Гамаля</h3>
 
 <div>
-    <table class="table table-striped" style="margin: auto; width: 800px; ">
+    <table class="table table-striped" style="margin: auto; width: 1000px; ">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Переменная</th>
@@ -19,6 +20,10 @@
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td>h(m) = @elGamal.h</td>
+                <td>Хеш-функция</td>
+            </tr>
             <tr>
                 <td>p = @elGamal.p</td>
                 <td>Простое большое число</td>
@@ -44,10 +49,6 @@
                 <td>Случайное число</td>
             </tr>
             <tr>
-                <td>h(m) = @elGamal.h</td>
-                <td>Хеш-функцияо</td>
-            </tr>
-            <tr>
                 <td>r = @elGamal.r</td>
                 <td>Вычисляется по К</td>
             </tr>
@@ -63,9 +64,13 @@
     </table>
 </div>
 
-<div>
-    <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
-</div>
+
+@if (Document?.Data != null) {
+    <div>
+        <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
+    </div>
+}
+
 
 @code {
 

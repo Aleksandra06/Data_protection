@@ -1,9 +1,13 @@
 ﻿using DataProtection.Engine.Managers;
+
 using DataProtection.PageModels;
 using DataProtection.PageModels.Lab3;
 using Microsoft.AspNetCore.Components;
 using System;
+
 using System.Security.Cryptography;
+using Org.BouncyCastle.Math;
+
 
 namespace DataProtection.Pages.Lab3
 {
@@ -16,77 +20,24 @@ namespace DataProtection.Pages.Lab3
         MyModPow myMod = new MyModPow();
         Evklid evklid = new Evklid();
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
+        
         public void generate()
         {
-            elGamal.p = generateP();
-            elGamal.p_prev = elGamal.p - 1;
-            elGamal.g = generateG();
-            elGamal.x = random.Next(2, (int)elGamal.p_prev);
-            elGamal.y = myMod.Pow(elGamal.g, elGamal.x, elGamal.p);
-            // elGamal.h = ... // Хеш - функция для message
-            // SHA256 sha256 = SHA256.Create();
-            // elGamal.h = sha256.ComputeHash();
-            elGamal.k = generateK();
-            elGamal.k_revers = generateKREVERS();
-            elGamal.r = myMod.Pow(elGamal.g, elGamal.k, elGamal.p);
-            // elGamal. ...
-            // elGamal. ...
-            // elGamal. ...
-        }
+            SHA256 sha256 = SHA256.Create();
+            elGamal.h = new BigInteger(sha256.ComputeHash(Document.Data));
 
-        public long generateK()
-        {
-            long currentK;
+
+            BigInteger currentQ;
+            BigInteger currentP;
             do {
-                currentK = random.Next(2, (int)elGamal.p_prev);
-            } while (evklid.gcd(currentK, elGamal.p_prev) != 1);
-            return currentK;
+                currentQ = BigInteger.ProbablePrime(264, new Random());
+                currentP = currentQ.Multiply(BigInteger.Two).Add(BigInteger.Two);
+            } while (!currentP.IsProbablePrime(50));
+
+            elGamal.p = currentP;
+            elGamal.q = currentQ;
+
         }
 
-        public long generateQ()
-        {
-            long currentQ;
-            do {
-                currentQ = random.Next(1 << 7, 1 << 8);
-            } while (!IsPrime.isPrime(currentQ, 1 << 10));
-            return currentQ;
-        }
-
-        public long generateG()
-        {
-            long currentG = 1;
-            for (int i = 2; i < elGamal.p_prev; i++) {
-                if (myMod.Pow(i, elGamal.q, elGamal.p) != 1) {
-                    currentG = i;
-                    break;
-                }
-            }
-            return currentG;
-        }
-
-        public long generateP()
-        {
-            long currentP;
-            do {
-                elGamal.q = generateQ();
-                currentP = elGamal.q * 2 + 1;
-
-            } while (!IsPrime.isPrime(currentP, 1 << 10));
-            return currentP;
-        }
-
-        public long generateKREVERS()
-        {
-            evklid.gcd(elGamal.k, elGamal.p_prev);
-
-            if (evklid.mY < 0) {
-                evklid.mY += elGamal.p_prev;
-            }
-            return evklid.mY;
-        }
     }
 }

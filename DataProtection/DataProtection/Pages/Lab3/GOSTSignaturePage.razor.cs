@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using DataProtection.PageModels;
 using DataProtection.PageModels.Lab3;
@@ -13,6 +14,8 @@ namespace DataProtection.Pages.Lab3
     {
         [Parameter] public DocumentModel Document { get; set; }
         public GOSTSignatureModel gost = new GOSTSignatureModel();
+        Random random = new Random();
+
 
         protected override void OnInitialized()
         {
@@ -20,7 +23,17 @@ namespace DataProtection.Pages.Lab3
         }
         public void generate()
         {
+            gost.p = generateP();
+        }
 
+        private System.Numerics.BigInteger generateP()
+        {
+            System.Numerics.BigInteger currentQ;
+            //int b = random.Next(700, 800);
+            //do {
+                
+            //} while ();
+            throw new NotImplementedException();
         }
     }
 }
