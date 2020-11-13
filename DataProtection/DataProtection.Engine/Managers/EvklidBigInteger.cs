@@ -9,8 +9,8 @@ namespace DataProtection.Engine.Managers
 {
     public class EvklidBigInteger
     {
-        public List<GeneralizedEvklidBigInteger> TabEvklid { get; set; } = 
-            new List<GeneralizedEvklidBigInteger>();
+        public List<GeneralizedBigIntegerEvklid> TabEvklid { get; set; } = 
+            new List<GeneralizedBigIntegerEvklid>();
         public BigInteger mX, mY;
         public bool mCheck = true;
 
@@ -22,7 +22,7 @@ namespace DataProtection.Engine.Managers
                 var tmp = a; a = b; b = tmp;
             }
 
-            TabEvklid.Add(new GeneralizedEvklidBigInteger());
+            TabEvklid.Add(new GeneralizedBigIntegerEvklid());
             TabEvklid.Last().U = new EvklidBigIntegerModel(a, 1, 0);
             TabEvklid.Last().V = new EvklidBigIntegerModel(b, 0, 1);
 
@@ -35,7 +35,7 @@ namespace DataProtection.Engine.Managers
                 E.T.B = E.U.B - (q * E.V.B);
                 E.T.R = E.U.R - (q * E.V.R);
 
-                TabEvklid.Add(new GeneralizedEvklidBigInteger());
+                TabEvklid.Add(new GeneralizedBigIntegerEvklid());
                 TabEvklid.Last().U = E.V;
                 TabEvklid.Last().V = E.T;
             }
