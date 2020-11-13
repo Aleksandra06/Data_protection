@@ -31,8 +31,15 @@ namespace DataProtection.Pages.Lab3
             BigInteger currentP;
             do {
                 currentQ = BigInteger.ProbablePrime(264, new Random());
-                currentP = currentQ.Multiply(BigInteger.Two).Add(BigInteger.Two);
+                currentP = currentQ.Multiply(BigInteger.Two);
+                currentP = currentP.Add(BigInteger.One);
             } while (!currentP.IsProbablePrime(50));
+
+            for (BigInteger i = BigInteger.Two; i.CompareTo(elGamal.p.Subtract(BigInteger.One)) < 0; i = i.Add(BigInteger.One)) {
+                if (i.) {
+
+                }
+            }
 
             elGamal.p = currentP;
             elGamal.q = currentQ;
