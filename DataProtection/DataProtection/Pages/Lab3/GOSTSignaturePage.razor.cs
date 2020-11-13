@@ -39,7 +39,7 @@ namespace DataProtection.Pages.Lab3
                 gost.b = new BigInteger(769, random);
 
                 gost.p = new BigInteger(((gost.b.Multiply(gost.q)).Add(BigInteger.One)).ToString());
-            } while (!gost.p.IsProbablePrime(3) && gost.h.CompareTo(gost.q) < 0);
+            } while (!gost.p.IsProbablePrime(50) || gost.h.CompareTo(gost.q) > 0);
 
             //а
             BigInteger g;
@@ -58,8 +58,8 @@ namespace DataProtection.Pages.Lab3
             gost.x = BigInteger.ProbablePrime(bitLength, random);
             gost.y = FastModuloExponentiation(gost.a, gost.x, gost.p);
 
-            gost.h = new BigInteger(Document.Data.GetHashCode().ToString());
-            gost.h = gost.h.Abs();
+            //gost.h = new BigInteger(Document.Data.GetHashCode().ToString());
+            //gost.h = gost.h.Abs();
             do
             {
                 gost.k = BigInteger.ProbablePrime(bitLength, random);
@@ -72,7 +72,7 @@ namespace DataProtection.Pages.Lab3
             } while (gost.s.CompareTo(BigInteger.Zero) == 0);
 
             //проверка
-            gost.h_check = new BigInteger(Document.GetHashCode().ToString());
+            gost.h_check = new BigInteger(sha256.ComputeHash(Document.Data));
             gost.h_check = gost.h_check.Abs();
             var r = gost.r;
             var s = gost.s;
@@ -81,9 +81,8 @@ namespace DataProtection.Pages.Lab3
                 mMessageResult = "Числа r/s не удовлетворяют диапазону 0<r<q или 0<s<q!";
                 return;
             }
-            //        Vector vector = Lab1.generalizedEuclidsAlgorithm(q, h);
-            //        hMinOne = vector.y.add(q);
             var hMinOne = gost.h_check.ModInverse(gost.q);
+            var blablabla = hMinOne.Multiply(gost.h_check).Mod(gost.q);
             gost.u1 = (s.Multiply(hMinOne)).Mod(gost.q);
             gost.u2 = (((r).Multiply(hMinOne)).Multiply(new BigInteger("-1"))).Mod(gost.q);
             gost.v = (FastModuloExponentiation(gost.a, gost.u1, gost.p).Multiply(FastModuloExponentiation(gost.y, gost.u2, gost.p))).Mod(gost.p).Mod(gost.q);
