@@ -5,6 +5,7 @@
 <style>
     td, th {
         text-align: center;
+        max-width: 200px;
     }
 </style>
 
@@ -25,11 +26,11 @@
             </tr>
             <tr>
                 <td>q = @gost.q</td>
-                <td>Простое, (p=bq+1) 256б</td>
+                <td>Простое большое число, (p=bq+1) 256б</td>
             </tr>
             <tr>
                 <td>b = @gost.b</td>
-                <td>Целое число</td>
+                <td>Простое большое число, (p=bq+1)</td>
             </tr>
             <tr>
                 <td>а = @gost.a</td>
@@ -99,6 +100,4 @@
     <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
 </div>
 
-@code {
-
-}
+<h1>@mMessageResult</h1>
