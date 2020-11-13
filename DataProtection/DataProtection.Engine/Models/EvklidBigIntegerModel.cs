@@ -28,5 +28,12 @@ namespace DataProtection.Engine.Models
             B = b;
             R = r;
         }
+
+        public EvklidBigIntegerModel(int a, int b, int r)
+        {
+            A = new BigInteger(a.ToString());
+            B = new BigInteger(b.ToString());
+            R = new BigInteger(r.ToString());
+        }
     }
 }
