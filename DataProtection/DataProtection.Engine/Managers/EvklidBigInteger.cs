@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using DataProtection.Engine.Models;
 using Org.BouncyCastle.Math;
@@ -12,10 +11,10 @@ namespace DataProtection.Engine.Managers
     {
         public List<GeneralizedBigIntegerEvklid> TabEvklid { get; set; } = 
             new List<GeneralizedBigIntegerEvklid>();
-        public Org.BouncyCastle.Math.BigInteger mX, mY;
+        public BigInteger mX, mY;
         public bool mCheck = true;
 
-        public Org.BouncyCastle.Math.BigInteger gcd(Org.BouncyCastle.Math.BigInteger _a, Org.BouncyCastle.Math.BigInteger _b)
+        public BigInteger gcd(BigInteger _a, BigInteger _b)
         {
             var a = _a;
             var b = _b;
@@ -24,10 +23,10 @@ namespace DataProtection.Engine.Managers
             }
 
             TabEvklid.Add(new GeneralizedBigIntegerEvklid());
-            TabEvklid.Last().U = new EvklidBigIntegerModel(a, new Org.BouncyCastle.Math.BigInteger(1.ToString()), new Org.BouncyCastle.Math.BigInteger(0.ToString()));
-            TabEvklid.Last().V = new EvklidBigIntegerModel(b, new Org.BouncyCastle.Math.BigInteger(1.ToString()), new Org.BouncyCastle.Math.BigInteger(0.ToString()));
+            TabEvklid.Last().U = new EvklidBigIntegerModel(a, BigInteger.One, BigInteger.Zero);
+            TabEvklid.Last().V = new EvklidBigIntegerModel(b, BigInteger.Zero, BigInteger.One);
 
-            while (TabEvklid.Last().V.A.CompareTo(0) != 0) {
+            while (TabEvklid.Last().V.A.CompareTo(BigInteger.Zero) != 0) {
                 var E = TabEvklid.Last();
                 var q = E.U.A.Divide(E.V.A);
 
@@ -41,9 +40,11 @@ namespace DataProtection.Engine.Managers
                 TabEvklid.Last().V = E.T;
             }
 
-            mY = TabEvklid.Last().U.B;
+            mX = TabEvklid.Last().U.B;
             mY = TabEvklid.Last().U.R;
-            mCheck = (a.Multiply(mY).Add(b.Multiply(mY))).CompareTo(TabEvklid.Last().U.A) == 0;
+            BigInteger tmpCheck = a.Multiply(mX);
+            tmpCheck = tmpCheck.Add(b.Multiply(mY));
+            mCheck = tmpCheck.CompareTo(TabEvklid.Last().U.A) == 0;
 
             return TabEvklid.Last().U.A;
         }
