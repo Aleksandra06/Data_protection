@@ -3,10 +3,10 @@ using DataProtection.PageModels;
 using DataProtection.PageModels.Lab3;
 using Microsoft.AspNetCore.Components;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Reflection.Metadata;
-using System.Threading.Tasks;
+using Org.BouncyCastle.Math;
+using System.Security.Cryptography;
 
 namespace DataProtection.Pages.Lab3
 {
@@ -14,10 +14,8 @@ namespace DataProtection.Pages.Lab3
     {
         [Parameter] public DocumentModel Document { get; set; }
         public RSASignatureModel rsa = new RSASignatureModel();
+        EvklidBigInteger evklid = new EvklidBigInteger();
 
-        Random random = new Random();
-        MyModPow myMod = new MyModPow();
-        Evklid evklid = new Evklid();
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -25,47 +23,62 @@ namespace DataProtection.Pages.Lab3
         public void generate()
         {
             rsa.p = generateP(); // and generate Q
-            rsa.n = rsa.p * rsa.q;
-            rsa.phi = (rsa.p - 1) * (rsa.q - 1);
+            rsa.n = rsa.p.Multiply(rsa.q);
+            rsa.phi = generatePhi();
             rsa.d = generateD();
             rsa.c = generateDREVERS();
-            // rsa.y = h(message) - hash
-            //rsa.s = myMod.Pow(rsa.y, rsa.c, rsa.n);
-            //rsa.w = myMod.Pow(rsa.s, rsa.d, rsa.n);
-        }
+            
+            rsa.y = generateH();
 
-        public long generateP()
+            rsa.s = rsa.y.ModPow(rsa.c, rsa.n);
+            rsa.w = rsa.s.ModPow(rsa.d, rsa.n);
+        }
+        public BigInteger generatePhi()
         {
-            long currentP;
+            BigInteger tmp_p = rsa.p.Subtract(BigInteger.One);
+            BigInteger tmp_q = rsa.q.Subtract(BigInteger.One);
+            return tmp_p.Multiply(tmp_q);
+        }
+        public BigInteger generateH()
+        {
+            SHA256 sha256 = SHA256.Create();
+            BigInteger h = new BigInteger(sha256.ComputeHash(Document.Data));
+            if (h.SignValue < 0) {
+                h = h.Abs();
+            }
+            return h;
+        }
+        public BigInteger generateP()
+        {
+            BigInteger currentP;
             do {
                 rsa.q = generateQ();
-                currentP = random.Next(1, 1 << 10);
-
-            } while (!IsPrime.isPrime(currentP, 1 << 10) && evklid.gcd(currentP, rsa.q) == 1);
+                currentP = BigInteger.ProbablePrime(264, new Random());
+            } while (!currentP.IsProbablePrime(50) && evklid.gcd(currentP, rsa.q) == BigInteger.One);
             return currentP;
         }
-        public long generateQ()
+        public BigInteger generateQ()
         {
-            long currentQ;
+            BigInteger currentQ;
             do {
-                currentQ = random.Next(1, 1 << 10);
-            } while (!IsPrime.isPrime(currentQ, 1 << 10));
+                currentQ = BigInteger.ProbablePrime(264, new Random());
+            } while (!currentQ.IsProbablePrime(50));
             return currentQ;
         }
-        public long generateD()
+        public BigInteger generateD()
         {
-            long currentD;
+            BigInteger currentD;
             do {
-                currentD = random.Next(2, (int)rsa.phi - 1);
-            } while (evklid.gcd(currentD, rsa.phi) != 1);
+                currentD = BigInteger.ProbablePrime(264, new Random());
+            } while (currentD.Gcd(rsa.phi).CompareTo(BigInteger.One) != 0);
             return currentD;
         }
-        public long generateDREVERS()
+        public BigInteger generateDREVERS()
         {
             evklid.gcd(rsa.d, rsa.phi);
 
-            if (evklid.mY < 0) {
-                evklid.mY += rsa.phi;
+            if (evklid.mY.CompareTo(BigInteger.Zero) < 0) {
+                evklid.mY = evklid.mY.Add(rsa.phi);
             }
             return evklid.mY;
         }
