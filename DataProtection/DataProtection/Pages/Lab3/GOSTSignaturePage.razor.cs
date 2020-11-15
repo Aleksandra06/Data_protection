@@ -18,12 +18,6 @@ namespace DataProtection.Pages.Lab3
         public GOSTSignatureModel gost = new GOSTSignatureModel();
         Random random = new Random();
         protected string mMessageResult = "";
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
-
         public void generate()
         {
             //h
