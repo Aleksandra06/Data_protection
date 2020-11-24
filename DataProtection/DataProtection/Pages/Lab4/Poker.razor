@@ -9,7 +9,7 @@
         <DataAnnotationsValidator />
         <div class="row pb-1">
             <label class="pr-2">Количество человек: </label>
-            <InputNumber @bind-Value="@Model.CountPeople" Class="form-control little-form" style="width: 200px" min="1" max="999999999"></InputNumber>
+            <InputNumber @bind-Value="@Model.CountPeople" Class="form-control little-form" style="width: 200px" min="1" max="999999999" @onblur="@Calc"></InputNumber>
             <ValidationMessage For="@(() => Model.CountPeople)" />
         </div>
         @*<div class="row pb-1">
@@ -30,19 +30,89 @@
 <div>
     <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@generate">Генерация</button>
 </div>
-<table>
-    <thead>
-        <th>
-            #
-        </th>
+<div>
+    <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@compute">Вычислить</button>
+</div>
+
+<div>
+    @Model?.deck?.Count Count 
+</div>
+<table class="table table-striped">
+    <thead class="thead-dark">
+    <th>
+        #
+    </th>
     </thead>
     <tbody>
-        @foreach (BigInteger i in Model.deck) {
-           <tr>
-               <td>
-                   @i
-               </td>
-           </tr> 
+        @if (Model?.deck != null) {
+            @foreach (BigInteger i in Model.deck) {
+                <tr>
+                    <td scope="col">
+                        @i
+                    </td>
+                </tr>
+
+            }
         }
     </tbody>
 </table>
+
+<div>
+    <button style="position: relative; left: 72%; transform: translate(-50%, 0); " class="btn btn-nav" @onclick="@(()=> { IsShowTable = !IsShowTable; })">Показать</button>
+</div>
+@if (IsShowTable && Model?.players != null) {
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">
+                    Игрок
+                </th>
+                <th scope="col">
+                    Первая карта
+                </th>
+                <th scope="col">
+                    Вторая карта
+                </th>
+                <th scope="col">
+                    Третья карта
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+                @foreach (var player in Model.players) {
+                    if (player == Model.players.Last()) {
+                        <tr>
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @Model.cards[player.cards[0]]
+                            </td>
+                            <td>
+                                @Model.cards[player.cards[1]]
+                            </td>
+                            <td>
+                                @Model.cards[player.cards[2]]
+                            </td>
+                        </tr>
+                    } else {
+                        <tr>
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @Model.cards[player.cards.First()]
+                            </td>
+                            <td>
+                                @Model.cards[player.cards.Last()]
+                            </td>
+                        </tr>
+                    }
+                    i++;
+                }
+            }
+        </tbody>
+    </table>
+}

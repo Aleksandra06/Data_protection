@@ -10,9 +10,9 @@ namespace DataProtection.PageModels.Lab4
 {
     public class PockerModel
     {
-        [Range(2, 25, ErrorMessage = "Слишком мало или слишком много игроков")]
+        [Range(2, 23, ErrorMessage = "Слишком мало или слишком много игроков")]
         public int CountPeople { get; set; }
-        public Dictionary<int, string> cards { get; set; }
+        public Dictionary<BigInteger, string> cards { get; set; }
         public BigInteger p { get; set; }
         public BigInteger p_prev { get; set; }
         public List<BigInteger> deck { get; set; }

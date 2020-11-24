@@ -5,7 +5,7 @@ using Org.BouncyCastle.Math;
 
 namespace DataProtection.Engine.Managers
 {
-    public class MyModPowBigInteger
+    public static class MyModPowBigInteger
     {
         public static BigInteger FastModuloExponentiation(BigInteger a, BigInteger x, BigInteger p)
         {
