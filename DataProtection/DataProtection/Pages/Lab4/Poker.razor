@@ -1,5 +1,19 @@
-﻿@page "/poker"
+﻿@page "/lab4"
 @inherits PokerViewModel
 
 <h3>Poker</h3>
 
+<div class="pl-0">
+    <EditForm Model="@Model">
+        <DataAnnotationsValidator />
+        <div class="row pb-1">
+            <label class="pr-2">Количество человек: </label>
+            <InputNumber @bind-Value="@Model.CountPeople" Class="form-control little-form" style="width: 200px" min="1" max="999999999"></InputNumber>
+            <ValidationMessage For="@(() => Model.CountPeople)" />
+        </div>
+        @*<div class="row pb-1">
+            <label class="pr-2">Открытый ключ: </label>
+            <div class="form-control little-form" style="width: 100px">@OpenKeyA()</div>
+        </div>*@
+    </EditForm>
+</div>
