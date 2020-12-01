@@ -1,0 +1,22 @@
+﻿@page "/lab5"
+@inherits VoiceViewModel
+
+<h3>lab5</h3>
+
+<h5>Эиос стал быстрее работать?</h5>
+<label class="row">
+    <input type="radio" name="edition" value="1" checked="@(Voise == 1)" /> Да
+</label>
+<label class="row">
+    <input type="radio" name="edition" value="2" checked="@(Voise == 1)" /> Нет
+</label>
+<label class="row">
+    <input type="radio" name="edition" value="3" checked="@(Voise == 1)" /> Воздержался
+</label>
+
+@if (!string.IsNullOrEmpty(Text))
+{
+    <h6 style="color: red;">@Text</h6>
+}
+    <button class="btn row" @onclick="@Vote">Проголосовать</button>
+    
