@@ -37,6 +37,9 @@ namespace DataProtection.Pages.Lab4
         }
         protected void Calc()
         {
+            if (Model.CountPeople > 23 || Model.CountPeople < 2) {
+                return;
+            }
             Model.players = new LinkedList<Player>();
             Model.deck = new List<BigInteger>();
             foreach (BigInteger i in Model.cards.Keys) {
@@ -70,6 +73,9 @@ namespace DataProtection.Pages.Lab4
 
         public void compute()
         {
+            if (Model.CountPeople > 23 || Model.CountPeople < 2) {
+                return;
+            }
             fillPlayers();
             encrypt();
             foreach (Player player in Model.players) {
