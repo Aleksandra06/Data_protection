@@ -5,13 +5,13 @@
 
 <h5>Эиос стал быстрее работать?</h5>
 <label class="row">
-    <input type="radio" name="edition" value="1" checked="@(Voise == 1)" /> Да
+    <input type="radio" name="edition" value="1" checked="@(Voise = 1)" /> Да
 </label>
 <label class="row">
-    <input type="radio" name="edition" value="2" checked="@(Voise == 1)" /> Нет
+    <input type="radio" name="edition" value="2" checked="@(Voise = 2)" /> Нет
 </label>
 <label class="row">
-    <input type="radio" name="edition" value="3" checked="@(Voise == 1)" /> Воздержался
+    <input type="radio" name="edition" value="3" checked="@(Voise = 3)" /> Воздержался
 </label>
 
 @if (!string.IsNullOrEmpty(Text))

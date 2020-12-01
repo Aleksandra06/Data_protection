@@ -8,7 +8,7 @@ namespace DataProtection.Pages.Lab5
 {
     public class VoiceViewModel : ComponentBase
     {
-        protected int Voise { get; set; } = 0;
+        protected int Voise { get; set; } = 1;
         protected string Text = "";
         protected void Vote()
         {
