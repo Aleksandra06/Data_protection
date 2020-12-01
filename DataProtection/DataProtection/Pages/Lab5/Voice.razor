@@ -14,9 +14,80 @@
     <input type="radio" name="edition" value="3" checked="@(Voise = 3)" /> Воздержался
 </label>
 
+
+<input type="text" placeholder="Иван" @bind-value="@voice.name"/>
+<label>@titleName</label><br>
+
 @if (!string.IsNullOrEmpty(Text))
 {
     <h6 style="color: red;">@Text</h6>
 }
     <button class="btn row" @onclick="@Vote">Проголосовать</button>
-    
+    <label>@checkResult</label>
+
+<table class="table table-striped">
+<thead class="thead-dark">
+    <tr>
+        <td scope="col">Переменная</td>
+        <td scope="col">Значение</td>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>p</td>
+        <td>@server.getP()</td>
+    </tr>
+    <tr>
+        <td>q</td>
+        <td>@server.getQ()</td>
+    </tr>
+    <tr>
+        <td>c</td>
+        <td>@server.getC()</td>
+    </tr>
+    <tr>
+        <td>d</td>
+        <td>@server.getD()</td>
+    </tr>
+    <tr>
+        <td>N</td>
+        <td>@server.getN()</td>
+    </tr>
+    <tr>
+        <td>Голосующий</td>
+        <td> челодой моловек</td>
+    </tr>
+    <tr>
+        <td>n</td>
+        <td>@voice.n</td>
+    </tr>
+    <tr>
+        <td>r</td>
+        <td>@voice.r</td>
+    </tr>
+    <tr>
+        <td>h</td>
+        <td>@voice.h</td>
+    </tr>
+    <tr>
+        <td>_h</td>
+        <td>@voice._h</td>
+    </tr>
+    <tr>
+        <td>_s</td>
+        <td>@voice._s</td>
+    </tr>
+    <tr>
+        <td>s</td>
+        <td>@voice.s</td>
+    </tr>
+    <tr>
+        <td>left</td>
+        <td>@server.getCheckLeft()</td>
+    </tr>
+    <tr>
+        <td>right</td>
+        <td>@server.getCheckRight()</td>
+    </tr>
+</tbody>
+</table>
