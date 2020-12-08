@@ -1,0 +1,28 @@
+﻿@page "/rgzTwo"
+@inherits RgzTwoViewModel
+
+<h5>
+    Необходимо написать программу, реализующую протокол
+    доказательства с нулевым знанием для задачи «Гамильтонов цикл».
+</h5>
+
+<InputFile OnChange="HandleFileSelected"></InputFile>
+@if (Document?.Data != null)
+{
+    <label>Размер: @(Document.Data.Length / 2048.00) мб</label>
+}
+@if (FileErrorsList?.Count > 0)
+{
+    <div class="row mb-2">
+        @foreach (var i in FileErrorsList)
+        {
+            <span class="row">@i</span>
+        }
+    </div>
+}
+
+@if (mIsReadFile)
+{
+    <h6>Число вершин (n) = @n</h6>
+    <h6>Количество ребер (m) = @m</h6>
+}
