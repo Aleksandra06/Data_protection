@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Org.BouncyCastle.Math;
 
 namespace DataProtection.Pages.RGZ_Slava
 {
     public partial class Authorization
     {
+        [Inject] public Server server { get; set; }
         /*
          * Varibale for Output to page
          */
@@ -24,6 +26,8 @@ namespace DataProtection.Pages.RGZ_Slava
         protected List<string> outputString = new List<string>();
         protected string outputMessage;
         protected string outputStatus;
+        protected List<string> outputCheckLeft = new List<string>();
+        protected List<string> outputCheckRight = new List<string>();
 
         /*
          * Varibale login and password
@@ -34,7 +38,7 @@ namespace DataProtection.Pages.RGZ_Slava
          * Varibale for page
          */
         protected int choose = 0;
-        protected bool tableShow = false;
+        protected bool tableShow = false; 
 
         public void regist()
         {
@@ -46,19 +50,25 @@ namespace DataProtection.Pages.RGZ_Slava
                 if (client.checkNaboutServer(server)) {
                     if (server.checkLogin(client.getLogin())) {
                         outputStatus = "Вы есть в нашей базе, попробуйте Авторизоваться";
+                        
                     } else {
                         outputStatus = "Вас нет в нашей базе, генерируем вам пароль";
+                        tableShow = false;
+                        outputMessage = "";
                         register(client, server);
                     }
                 } else {
                     outputStatus = "Сменился сервер, генерируем вам пароль";
+                    tableShow = false;
+                    outputMessage = "";
                     registerReload(client, server);
                 }
+                outputMessage = "";
             }
         }
         public void auth()
         {
-            Server server = new Server();
+            //Server server = new Server();
             Client client = new Client();
 
             if (!string.IsNullOrEmpty(login)) {
@@ -69,9 +79,13 @@ namespace DataProtection.Pages.RGZ_Slava
                         identify(client, server);
                     } else {
                         outputStatus = "Вас нет в нашей базе, попробуйте Зарегистрироваться";
+                        tableShow = false;
+                        outputMessage = "";
                     }
                 } else {
                     outputStatus = "Сменился сервер, генерируем вам пароль";
+                    tableShow = false;
+                    outputMessage = "";
                     registerReload(client, server);
                 }
             }
@@ -92,8 +106,13 @@ namespace DataProtection.Pages.RGZ_Slava
                 client.responseE(server.sendE());
                 if (server.responseY(client.sendY())) {
                     outputString.Add("Успешно");
+                    outputCheckLeft.Add(server.getLeft());
+                    outputCheckRight.Add(server.getRight());
                 } else {
                     outputString.Add("Ошибка");
+                    outputCheckLeft.Add(server.getLeft());
+                    outputCheckRight.Add(server.getRight());
+                    break;
                 }
             }
 
@@ -108,18 +127,25 @@ namespace DataProtection.Pages.RGZ_Slava
         }
         public void identify(Client client, Server server)
         {
+            outputString = new List<string>();
+
             client.generateV(password);
             if (server.connect(client.getLogin(), client.getV())) {
-                outputString = new List<string>();
                 server.setT(40);
                 for (int i = 0; i < server.getT(); i++) {
                     server.responseX(client.sendX());
                     client.responseE(server.sendE());
                     if (server.responseY(client.sendY())) {
                         outputString.Add("Успешно");
+                        outputCheckLeft.Add(server.getLeft());
+                        outputCheckRight.Add(server.getRight());
                     } else {
                         outputString.Add("Ошибка");
+                        outputCheckLeft.Add(server.getLeft());
+                        outputCheckRight.Add(server.getRight());
+                        break;
                     }
+                    
                 }
 
                 if (outputString.Find(x => x == "Ошибка") == "Ошибка") {
@@ -149,6 +175,7 @@ namespace DataProtection.Pages.RGZ_Slava
                     outputString.Add("Успешно");
                 } else {
                     outputString.Add("Ошибка");
+                    break;
                 }
             }
 

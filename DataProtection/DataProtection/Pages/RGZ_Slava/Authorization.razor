@@ -46,11 +46,18 @@
             </thead>
             <tbody>
                 @{
-                    int i = 1;
-                    foreach (var iter in outputString) {
+                    for (int i = 0; i < outputString.Count; i++) {
                         <tr>
-                            <td>@(i++)</td>
-                            <td>@iter</td>
+                            <td>@(i + 1)</td>
+                            <td>@outputString[i]</td>
+                        </tr>
+                        <tr>
+                            <td>y^2</td>
+                            <td>@outputCheckLeft[i]</td>
+                        </tr>
+                        <tr>
+                            <td>x * v^e</td>
+                            <td>@outputCheckRight[i]</td>
                         </tr>
                     }
                 }

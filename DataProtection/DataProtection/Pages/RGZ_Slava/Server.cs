@@ -23,6 +23,10 @@ namespace DataProtection.Pages.RGZ_Slava
         private int e { get; set; }
         private bool ControlCheck { get; set; }
 
+        private string left_check;
+
+        private string right_check;
+
         private string path = "Resource\\RGZ_Slava\\serverData.txt";
         
         private string pathList = "Resource\\RGZ_Slava\\serverList.txt";
@@ -38,7 +42,6 @@ namespace DataProtection.Pages.RGZ_Slava
                 savePublicData();
             }
         }
-
         public bool checkLogin(string login)
         {
             using (StreamReader reader = new StreamReader(pathList)) {
@@ -52,7 +55,6 @@ namespace DataProtection.Pages.RGZ_Slava
             }
             return false;
         }
-
         public void savePublicData()
         {
             using (StreamWriter writer = new StreamWriter(pathDataPublicServer)) {
@@ -152,6 +154,8 @@ namespace DataProtection.Pages.RGZ_Slava
                                                     x.Multiply(MyModPowBigInteger.FastModuloExponentiation(v, new BigInteger(e.ToString()), n)),
                                                     BigInteger.One,
                                                     n);
+            left_check = left.ToString();
+            right_check = right.ToString();
             if (left.CompareTo(right) == 0) {
                 return true;
             }
@@ -173,7 +177,6 @@ namespace DataProtection.Pages.RGZ_Slava
         {
             this.t = t;
         }
-
         public void deleteClient(string login)
         {
             List<string> allClient = new List<string>();
@@ -192,10 +195,18 @@ namespace DataProtection.Pages.RGZ_Slava
                 }
             }
         }
-
         public int getT()
         {
             return t;
+        }
+
+        public string getLeft()
+        {
+            return left_check;
+        }
+        public string getRight()
+        {
+            return right_check;
         }
     }
 }

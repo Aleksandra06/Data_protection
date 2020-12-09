@@ -44,7 +44,6 @@ namespace DataProtection.Pages.RGZ_Slava
             }
             v = MyModPowBigInteger.FastModuloExponentiation(s, BigInteger.Two, n);
         }
-
         private bool checkOnSymbol(string password)
         {
             for (int i = 0; i < password.Length; i++) {
@@ -54,7 +53,6 @@ namespace DataProtection.Pages.RGZ_Slava
             }
             return true;
         }
-
         public string getLogin()
         {
             return login;
