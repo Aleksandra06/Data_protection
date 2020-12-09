@@ -1,0 +1,63 @@
+﻿@page "/rgz_slava"
+<h3>Authorization</h3>
+
+<button @onclick="@(()=> { choose = 1; tableShow = false; })" class="btn btn-success" style="padding: 5px; font-size: 20px; color: white;">Авторизоваться</button>
+<button @onclick="@(()=> { choose = 2; tableShow = false; })" class="btn btn-warning" style="padding: 5px; font-size: 20px; color: white;">Зарегистрироваться</button>
+
+@if (choose == 1) {
+    <div>
+        <label class="col-form-label">Логин</label>
+        <input type="text" @bind-value=@login required class="input-group"/>
+        <label class="col-form-label">Пароль</label>
+        <input type="text" @bind-value=@password  class="input-group"/>
+        <div>
+            <button value="Авторизоваться" @onclick="@auth" class="btn btn-primary" style="padding: 5px; font-size: 20px; color: white;">Авторизоваться</button>
+        </div>
+    </div>
+}
+
+
+@if (choose == 2) {
+    <div>
+        <label class="col-form-label">Логин</label>
+        <input type="text" @bind-value=@login required  class="input-group"/>
+        <div>
+            <button value="Авторизоваться" @onclick="@regist" class="btn btn-primary" style="padding: 5px; font-size: 20px; color: white;">Зарегистрироваться</button>
+        </div>
+    </div>
+}
+
+
+<div>
+    <label class="col-form-label">@outputStatus</label>
+</div>
+<div>
+    <label class="col-form-label">@outputMessage</label>
+</div>
+
+@if (tableShow) {
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Итерация</th>
+                    <th>Проверка</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                    foreach (var iter in outputString) {
+                        <tr>
+                            <td>@(i++)</td>
+                            <td>@iter</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+@code {
+
+}
