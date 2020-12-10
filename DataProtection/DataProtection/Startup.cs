@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataProtection.Pages.RGZ_Slava;
+using DataProtection.Pages.RgzTwo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -28,7 +29,7 @@ namespace DataProtection
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            //services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<AliceServer>();
             services.AddSingleton<Server>();
         }
 

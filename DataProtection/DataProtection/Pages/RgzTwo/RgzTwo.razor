@@ -1,4 +1,5 @@
 ﻿@page "/rgzTwo"
+@using Org.BouncyCastle.Math
 @inherits RgzTwoViewModel
 
 <h5>
@@ -6,7 +7,7 @@
     доказательства с нулевым знанием для задачи «Гамильтонов цикл».
 </h5>
 
-<InputFile OnChange="HandleFileSelected"></InputFile>
+<InputFile OnChange="SetData"></InputFile>
 @if (Document?.Data != null)
 {
     <label>Размер: @(Document.Data.Length / 2048.00) мб</label>
@@ -21,8 +22,72 @@
     </div>
 }
 
-@if (mIsReadFile)
+@if (mIsReadFile && mGraph != null)
 {
-    <h6>Число вершин (n) = @n</h6>
-    <h6>Количество ребер (m) = @m</h6>
+    <h6>Число вершин (n) = @mGraph.N</h6>
+    <h6>Количество ребер (m) = @mGraph.M</h6>
+    @*<div>
+            Гамильтонов цикл: @GetGamiltonString()
+        </div>*@
+    <div>G:</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <td></td>
+                @for (int i = 0; i < mGraph.N; i++)
+                {
+                    <td>@(i + 1)</td>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (mGraph.Data != null)
+            {
+                int i = 0;
+                @foreach (List<BigInteger> str in mGraph.Data)
+                {
+                    i++;
+                    <tr>
+                        <td>
+                            @i
+                        </td>
+                        @foreach (var col in str)
+                        {
+                            <td>
+                                @col.ToString()
+                            </td>
+
+                        }
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+
+    <div>
+        @*<div>
+                Варианты вопроса:<br />
+                1)Доказать изоморфизм графов<br />
+                2)Показать Гамильтонов цикл<br />
+                Заданы вопросы:
+            </div>
+            <div class="col pl-1 pr-0">
+                <select class="form-control form-control-sm ml-2" style="width:120px;" @onchange=@ChangeAnswer title="Start">
+                    @foreach (var d in Variant)
+                    {
+                        if (NumAnswer == d)
+                        {
+                            <option value=@d.ToString() selected="selected">@d</option>
+                        }
+                        else
+                        {
+                            <option value=@d.ToString()>@d</option>
+                        }
+                    }
+                </select>
+            </div>*@
+        <button class="btn btn-nav" @onclick="@Dokazatelstvo">Докажи</button>
+    </div>
 }
+<h5>@StatusString</h5>

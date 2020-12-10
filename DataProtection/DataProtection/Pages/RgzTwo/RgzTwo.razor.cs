@@ -4,35 +4,62 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BlazorInputFile;
+using DataProtection.Engine.Managers;
 using DataProtection.PageModels;
 using Microsoft.AspNetCore.Components;
+using Org.BouncyCastle.Math;
 
 namespace DataProtection.Pages.RgzTwo
 {
     public class RgzTwoViewModel : ComponentBase
     {
+        [Inject] public AliceServer Server { get; set; }
         protected List<string> FileErrorsList { get; set; }
-        protected bool ShowProgressBar { get; set; } = false;
-        protected double ProgressValue { get; set; }
         protected DocumentModel Document { get; set; }
 
         protected bool mIsReadFile = false;
-        //-----
-        protected int n;
-        protected int m;
 
-        private static List<Edge> edges = new List<Edge>();
+        protected string StatusString = "";
         //-----
+        public Graph mGraph = new Graph();
+        public Graph mF = new Graph();
+        //-----
+        //protected int NumAnswer = 1;
+        //protected List<int> Variant { get; set; } = new List<int> { 1, 2 };
+        //key---
+        BigInteger d, N;
+        BigInteger P, Q, F, c;
+        //----
 
-        protected async void HandleFileSelected(IFileListEntry[] files)
+        protected async void SetData(IFileListEntry[] files)
+        {
+            try
+            {
+                StatusString = "";
+                await HandleFileSelected(files);
+                string textFromFile = System.Text.Encoding.Default.GetString(Document.Data);
+                CreateKey();
+                Server.SetKey(N, d);
+                mGraph = Server.LookGraph(textFromFile);
+                mF = Server.F;
+                StateHasChanged();
+            }
+            catch (Exception e)
+            {
+                if (!string.IsNullOrEmpty(e.Message))
+                {
+                    FileErrorsList.Add($"Ошибка: {e.Message}");
+                }
+            }
+        }
+
+        protected async Task HandleFileSelected(IFileListEntry[] files)
         {
             FileErrorsList = new List<string>();
             mIsReadFile = false;
-            edges = new List<Edge>();
 
             if (files != null && files.Count() > 0)
             {
-                double step = (double)1 / files.Count();
                 var file = files.FirstOrDefault();
                 try
                 {
@@ -40,18 +67,16 @@ namespace DataProtection.Pages.RgzTwo
                     if (doc != null)
                     {
                         Document = doc;
-                        string textFromFile = System.Text.Encoding.Default.GetString(Document.Data);
-                        GetDataFromFile(textFromFile);
                     }
                     mIsReadFile = true;
                 }
                 catch (Exception e)
                 {
                     FileErrorsList.Add($"Файл: {file.Name} не загружен, потому что {e.Message}");
+                    throw new Exception();
                 }
                 finally
                 {
-                    ProgressValue += step;
                     StateHasChanged();
                 }
             }
@@ -79,44 +104,152 @@ namespace DataProtection.Pages.RgzTwo
             }
             return null;
         }
-        private void GetDataFromFile(string str)
+
+        //protected void ChangeAnswer(ChangeEventArgs e)
+        //{
+        //    NumAnswer = int.Parse(e.Value.ToString());
+        //}
+
+        protected void CreateKey()
         {
-            str = str.Replace("\r", "");
-            var strTmp = str.Substring(0, str.IndexOf("\n"));
-            var indexNumber = str.IndexOf(",") >= 0 ? str.IndexOf(",") : str.IndexOf(" ");
-            var strNumber = str.Substring(0, indexNumber);
-            n = Convert.ToInt32(strNumber);
-            strNumber = strTmp.Substring(indexNumber + 1).Replace(" ", "");
-            m = Convert.ToInt32(strNumber);
-            if (n >= 1001 || m >= Math.Pow(n, 2) || n <= 0 || m <= 0)
+            EvklidBigInteger evklid = new EvklidBigInteger();
+            Random Rand = new Random();
+            int bit = 512;
+            do
             {
-                throw new Exception("ошибочные данные в первой строке!");
+                Q = BigInteger.ProbablePrime(bit, new Random());
+                //Q = new BigInteger(Rand.Next(1, (int)Math.Pow(10, 4)), Rand);
+            } while (Q.IsProbablePrime(1 << 10) == false);
+
+            do
+            {
+                P = BigInteger.ProbablePrime(bit, new Random());
+                //P = new BigInteger(Rand.Next(1, (int)Math.Pow(10, 4)), Rand);
+            } while (P.IsProbablePrime(1 << 10) == false);
+            N = P.Multiply(Q);
+            F = (P.Subtract(BigInteger.One)).Multiply((Q.Subtract(BigInteger.One)));
+            while (true)
+            {
+                var dCount = Rand.Next(1, F.ToString().Length - 1);
+                d = new BigInteger(dCount, Rand);
+                var gcd = F.Gcd(d); // max, min
+                if (gcd.CompareTo(BigInteger.One) == 0)
+                {
+                    break;
+                }
             }
 
-            strTmp = str.Substring(str.IndexOf("\n") + 1).Replace(" ", "");
-            while (!string.IsNullOrEmpty(strTmp.Replace(" ", "").Replace(",", "")))
+            c = d.ModInverse(F);
+        }
+
+        protected async void Dokazatelstvo()
+        {
+            StatusString = "";
+            Random rand = new Random();
+            var count = rand.Next(3, 20);
+            for (int i = 0; i < count; i++)
             {
-                string strStr;
-                var indexStr = strTmp.IndexOf("\n");
-                if (indexStr >= 0)
+                var num = rand.Next(2) + 1;
+                switch (num)
                 {
-                    strStr = strTmp.Substring(0, indexStr).Replace(" ", "");
-                    strTmp = strTmp.Substring(indexStr + 1);
+                    case 1:
+                        var answerIz = Server.DokazyIzomorf();
+                        if (!CheckIzomorf(answerIz.Item1, answerIz.Item2))
+                        {
+                            StatusString = "Алиса не прошла проверку";
+                            return;
+                        }
+                        break;
+                    case 2:
+                        var answerG = Server.DokazyGamiltonov();
+                        if (!CheckGamiltonov(answerG))
+                        {
+                            StatusString = "Алиса не прошла проверку";
+                            return;
+                        }
+                        break;
+                    default: break;
                 }
-                else
-                {
-                    strStr = strTmp;
-                    strTmp = "";
-                }
-                var tmpMas = strStr.Split(",");
-                edges.Add(new Edge()
-                {
-                    vertex1 = Convert.ToInt32(tmpMas[0]),
-                    vertex2 = Convert.ToInt32(tmpMas[1]),
-                    color1 = Convert.ToInt32(tmpMas[2]),
-                    color2 = Convert.ToInt32(tmpMas[3]),
-                });
             }
+            StatusString = "Алиса прошла проверку";
+        }
+
+        private bool CheckGamiltonov(List<EdgeCod> answerG)
+        {
+            foreach (var edge in answerG)
+            {
+                var cod = mF.Data[edge.Vertix1][edge.Vertix2];
+                var decod = cod.ModPow(c, N);
+                if (decod.CompareTo(edge.Data) != 0)
+                {
+                    return false;
+                }
+            }
+
+            var numbers1 = new List<int>();
+            for (int i = 0; i < mGraph.N; i++)
+            {
+                numbers1.Add(i);
+            }
+            var numbers2 = numbers1.ToList();
+
+            foreach (var edge in answerG)
+            {
+                if (!numbers1.Any(x => x == edge.Vertix1))
+                {
+                    return false;
+                }
+
+                numbers1.Remove(edge.Vertix1);
+
+                if (!numbers2.Any(x => x == edge.Vertix2))
+                {
+                    return false;
+                }
+
+                numbers2.Remove(edge.Vertix2);
+            }
+
+            return true;
+        }
+
+        private bool CheckIzomorf(List<int> numer, Graph h1)
+        {
+            for (var i = 0; i < h1.Data.Count; i++)
+            {
+                var str = h1.Data[i];
+                for (var index = 0; index < str.Count; index++)
+                {
+                    var decod = mF.Data[i][index].ModPow(c, N);
+                    if (decod.CompareTo(h1.Data[i][index]) != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            var g1 = Server.InitGraph(h1.N);
+            g1.M = h1.M;
+            foreach (var edge in Server.mEdges)
+            {
+                g1.Data[numer[edge.Vertex1 - 1]][numer[edge.Vertex2 - 1]] = new BigInteger("1");
+                g1.Data[numer[edge.Vertex2 - 1]][numer[edge.Vertex1 - 1]] = new BigInteger("1");
+            }
+
+            for (var i = 0; i < h1.Data.Count; i++)
+            {
+                var str = h1.Data[i];
+                for (var index = 0; index < str.Count; index++)
+                {
+                    var num = new BigInteger(str[index].ToString().Substring(1));
+                    if (num.CompareTo(g1.Data[i][index]) != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

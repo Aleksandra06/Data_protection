@@ -190,5 +190,14 @@ namespace DataProtection.Pages.RGZ_Slava
                 tableShow = true;
             }
         }
+
+        //protected string BaseUrl { get; set; } = "Helper/GetPdfBearbeitenPageByTemplateId?templateId=";
+        //protected string UrlData { get; set; }
+        //protected void UpdatePdfData()
+        //{
+        //    Guid guid = Guid.NewGuid();
+        //    UrlData = BaseUrl + "&guid=" + guid;
+        //}
+
     }
 }
