@@ -29,8 +29,8 @@ namespace DataProtection
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<AliceServer>();
-            services.AddSingleton<Server>();
+            services.AddSingleton<Pages.RgzTwo.Server>();
+            services.AddSingleton<Pages.RGZ_Slava.Server>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
