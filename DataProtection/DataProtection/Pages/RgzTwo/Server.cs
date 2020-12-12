@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Org.BouncyCastle.Math;
-using System.Threading.Tasks;
-using DataProtection.Engine.Managers;
 
 namespace DataProtection.Pages.RgzTwo
 {
@@ -20,7 +18,7 @@ namespace DataProtection.Pages.RgzTwo
         public BigInteger Nchifr { get; set; }
         public BigInteger dchifr { get; set; }
 
-        public List<int> Numeric;
+        private List<int> Numeric;
 
         public Graph LookGraph(string str)
         {
@@ -156,24 +154,6 @@ namespace DataProtection.Pages.RgzTwo
 
         private void ShifrRSA()
         {
-            //if (F.CompareTo(d) > 0)
-            //{
-            //    if (evklid.mY.CompareTo(BigInteger.Zero) < 0)
-            //    {
-            //        evklid.mY = evklid.mY.Add(F);
-            //    }
-            //    c = evklid.mY;
-            //}
-            //else
-            //{
-            //    if (evklid.mX.CompareTo(BigInteger.Zero) < 0)
-            //    {
-            //        evklid.mX = evklid.mX.Add(F);
-            //    }
-            //    c = evklid.mX;
-            //}
-
-            //
             this.F = InitGraph(this.N);
             this.F.M = this.M;
             for (var i = 0; i < H1.Data.Count; i++)

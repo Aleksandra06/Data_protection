@@ -13,24 +13,17 @@ namespace DataProtection.Pages.RgzTwo
 {
     public class RgzTwoViewModel : ComponentBase
     {
-        [Inject] public AliceServer Server { get; set; }
+        [Inject] public Server Server { get; set; }
         protected List<string> FileErrorsList { get; set; }
         protected DocumentModel Document { get; set; }
 
         protected bool mIsReadFile = false;
 
         protected string StatusString = "";
-        //-----
         public Graph mGraph = new Graph();
         public Graph mF = new Graph();
-        //-----
-        //protected int NumAnswer = 1;
-        //protected List<int> Variant { get; set; } = new List<int> { 1, 2 };
-        //key---
         BigInteger d, N;
         BigInteger P, Q, F, c;
-        //----
-
         protected async void SetData(IFileListEntry[] files)
         {
             try
@@ -105,11 +98,6 @@ namespace DataProtection.Pages.RgzTwo
             return null;
         }
 
-        //protected void ChangeAnswer(ChangeEventArgs e)
-        //{
-        //    NumAnswer = int.Parse(e.Value.ToString());
-        //}
-
         protected void CreateKey()
         {
             EvklidBigInteger evklid = new EvklidBigInteger();
@@ -118,13 +106,11 @@ namespace DataProtection.Pages.RgzTwo
             do
             {
                 Q = BigInteger.ProbablePrime(bit, new Random());
-                //Q = new BigInteger(Rand.Next(1, (int)Math.Pow(10, 4)), Rand);
             } while (Q.IsProbablePrime(1 << 10) == false);
 
             do
             {
                 P = BigInteger.ProbablePrime(bit, new Random());
-                //P = new BigInteger(Rand.Next(1, (int)Math.Pow(10, 4)), Rand);
             } while (P.IsProbablePrime(1 << 10) == false);
             N = P.Multiply(Q);
             F = (P.Subtract(BigInteger.One)).Multiply((Q.Subtract(BigInteger.One)));
@@ -132,7 +118,7 @@ namespace DataProtection.Pages.RgzTwo
             {
                 var dCount = Rand.Next(1, F.ToString().Length - 1);
                 d = new BigInteger(dCount, Rand);
-                var gcd = F.Gcd(d); // max, min
+                var gcd = F.Gcd(d); 
                 if (gcd.CompareTo(BigInteger.One) == 0)
                 {
                     break;
@@ -156,22 +142,24 @@ namespace DataProtection.Pages.RgzTwo
                         var answerIz = Server.DokazyIzomorf();
                         if (!CheckIzomorf(answerIz.Item1, answerIz.Item2))
                         {
-                            StatusString = "Алиса не прошла проверку";
+                            StatusString += "Алиса не прошла проверку";
                             return;
                         }
+                        StatusString += "Вопрос 1 ответ правильный";
                         break;
                     case 2:
                         var answerG = Server.DokazyGamiltonov();
                         if (!CheckGamiltonov(answerG))
                         {
-                            StatusString = "Алиса не прошла проверку";
+                            StatusString += "Алиса не прошла проверку";
                             return;
                         }
+                        StatusString += "Вопрос 2 ответ правильный";
                         break;
                     default: break;
                 }
             }
-            StatusString = "Алиса прошла проверку";
+            StatusString += "Алиса прошла проверку";
         }
 
         private bool CheckGamiltonov(List<EdgeCod> answerG)

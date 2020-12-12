@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DataProtection.Pages.RgzTwo
+﻿namespace DataProtection.Pages.RgzTwo
 {
     public class Edge
     {
